@@ -1,0 +1,1766 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aksent Consulting — Premium Digital Agency</title>
+  <meta name="description" content="Premium digitalna agencija. Web dizajn, aplikacije, AI automatizacija, brand identitet, e-commerce i konsultacije za vaš poslovni rast.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js" crossorigin="anonymous"></script>
+
+  <style>
+    /* =============================================
+       RESET & BASE
+    ============================================= */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #05050f;
+      --bg2:       #0b0b1e;
+      --purple:    #7c3aed;
+      --purple-l:  #a78bfa;
+      --cyan:      #0891b2;
+      --cyan-l:    #22d3ee;
+      --text:      #f0effe;
+      --text-m:    #8887a8;
+      --glass:     rgba(255,255,255,0.04);
+      --glass-b:   rgba(255,255,255,0.08);
+      --r:         16px;
+      --tr:        0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    body.loading { overflow: hidden; }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--purple); border-radius: 2px; }
+    ::selection { background: rgba(124,58,237,.35); color: var(--text); }
+
+    /* =============================================
+       CUSTOM CURSOR
+    ============================================= */
+    .cur {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 10000;
+      will-change: transform;
+    }
+    #cur-outer {
+      width: 38px; height: 38px;
+      border: 1px solid rgba(167,139,250,.45);
+      top: -19px; left: -19px;
+      transition: transform .15s ease, border-color .2s, background .2s, width .2s, height .2s;
+    }
+    #cur-inner {
+      width: 6px; height: 6px;
+      background: var(--purple-l);
+      top: -3px; left: -3px;
+      transition: transform .06s linear;
+    }
+    body.c-hover #cur-outer {
+      transform: scale(1.9) !important;
+      border-color: var(--purple-l);
+      background: rgba(124,58,237,.1);
+    }
+
+    /* =============================================
+       PRELOADER
+    ============================================= */
+    #preloader {
+      position: fixed; inset: 0;
+      background: var(--bg);
+      z-index: 9999;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 28px;
+    }
+    #preloader.out { animation: preOut .9s cubic-bezier(.76,0,.24,1) forwards; }
+    @keyframes preOut {
+      to { opacity: 0; transform: translateY(-100%); visibility: hidden; pointer-events: none; }
+    }
+    .pre-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.6rem; font-weight: 700;
+      letter-spacing: .45em; color: var(--text);
+    }
+    .pre-logo em { color: var(--purple-l); font-style: normal; }
+    .pre-bar {
+      width: 260px; height: 1px;
+      background: rgba(255,255,255,.08);
+      position: relative; overflow: hidden;
+    }
+    .pre-fill {
+      position: absolute; top: 0; left: 0; height: 100%;
+      background: linear-gradient(90deg, var(--purple), var(--cyan-l));
+      width: 0; transition: width .12s ease;
+    }
+    .pre-pct {
+      font-size: .7rem; letter-spacing: .2em;
+      color: var(--text-m); font-family: 'Space Grotesk', sans-serif;
+    }
+
+    /* =============================================
+       NAV
+    ============================================= */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      padding: 22px 60px;
+      display: flex; align-items: center; justify-content: space-between;
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      background: rgba(5,5,15,.55);
+      border-bottom: 1px solid var(--glass-b);
+      transition: padding var(--tr);
+    }
+    nav.scrolled { padding: 13px 60px; }
+
+    .nav-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700; font-size: 1.05rem; letter-spacing: .18em;
+      color: var(--text); text-decoration: none;
+    }
+    .nav-logo em { color: var(--purple-l); font-style: normal; }
+
+    .nav-links { display: flex; gap: 38px; list-style: none; }
+    .nav-links a {
+      color: var(--text-m); text-decoration: none;
+      font-size: .82rem; letter-spacing: .04em;
+      transition: color var(--tr); position: relative;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -3px; left: 0;
+      width: 0; height: 1px; background: var(--purple-l);
+      transition: width var(--tr);
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-links a:hover::after { width: 100%; }
+
+    .nav-right { display: flex; align-items: center; gap: 18px; }
+
+    .lang-toggle {
+      display: flex; background: var(--glass);
+      border: 1px solid var(--glass-b); border-radius: 100px; padding: 3px; gap: 2px;
+    }
+    .lang-btn {
+      padding: 4px 13px; border-radius: 100px;
+      font-size: .72rem; letter-spacing: .1em; font-weight: 600;
+      cursor: pointer; border: none; background: transparent;
+      color: var(--text-m); transition: all var(--tr);
+      font-family: 'Inter', sans-serif;
+    }
+    .lang-btn.active { background: var(--purple); color: #fff; }
+
+    .nav-cta {
+      padding: 8px 20px; border-radius: 100px;
+      border: 1px solid var(--glass-b); background: var(--glass);
+      color: var(--text); font-size: .78rem; letter-spacing: .04em;
+      cursor: pointer; transition: all var(--tr);
+      font-family: 'Inter', sans-serif; text-decoration: none;
+    }
+    .nav-cta:hover { background: var(--purple); border-color: var(--purple); }
+
+    /* =============================================
+       HERO
+    ============================================= */
+    #hero {
+      position: relative; min-height: 100vh;
+      display: flex; align-items: center; overflow: hidden;
+    }
+
+    #p-canvas {
+      position: absolute; inset: 0; pointer-events: none; z-index: 0;
+    }
+
+    /* Ambient glows */
+    .amb {
+      position: absolute; border-radius: 50%; pointer-events: none;
+    }
+    .amb-1 {
+      width: 700px; height: 700px; top: -200px; left: -200px;
+      background: radial-gradient(circle, rgba(124,58,237,.09) 0%, transparent 70%);
+    }
+    .amb-2 {
+      width: 500px; height: 500px; bottom: -150px; right: 20%;
+      background: radial-gradient(circle, rgba(8,145,178,.07) 0%, transparent 70%);
+    }
+
+    .hero-content {
+      position: relative; z-index: 10;
+      max-width: 660px; padding: 0 60px; margin-top: 90px;
+    }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 6px 16px; background: var(--glass);
+      border: 1px solid var(--glass-b); border-radius: 100px;
+      font-size: .73rem; letter-spacing: .1em; color: var(--purple-l);
+      margin-bottom: 36px;
+    }
+    .badge-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--cyan-l); flex-shrink: 0;
+      animation: blink 2s ease-in-out infinite;
+    }
+    @keyframes blink {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .4; transform: scale(.7); }
+    }
+
+    .hero-h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2.4rem, 5vw, 4.6rem);
+      font-weight: 700; line-height: 1.08; letter-spacing: -.025em;
+      margin-bottom: 26px;
+    }
+    .hero-h1 .line { display: block; overflow: hidden; }
+    .hero-h1 .line-inner { display: block; }
+    .grad {
+      background: linear-gradient(135deg, var(--purple-l) 0%, var(--cyan-l) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-desc {
+      font-size: 1.02rem; line-height: 1.72; color: var(--text-m);
+      max-width: 510px; margin-bottom: 42px;
+    }
+
+    .hero-actions { display: flex; gap: 14px; align-items: center; }
+
+    .btn-p {
+      padding: 14px 34px; border-radius: 100px; background: var(--purple);
+      color: #fff; font-size: .88rem; font-weight: 600; letter-spacing: .04em;
+      text-decoration: none; border: none; cursor: pointer;
+      transition: all var(--tr); font-family: 'Inter', sans-serif;
+      position: relative; overflow: hidden; display: inline-block;
+    }
+    .btn-p::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,.18), transparent);
+      opacity: 0; transition: opacity var(--tr);
+    }
+    .btn-p:hover { transform: translateY(-2px); box-shadow: 0 10px 34px rgba(124,58,237,.45); }
+    .btn-p:hover::before { opacity: 1; }
+
+    .btn-g {
+      padding: 14px 34px; border-radius: 100px; background: transparent;
+      color: var(--text); font-size: .88rem; font-weight: 500; letter-spacing: .04em;
+      text-decoration: none; border: 1px solid var(--glass-b); cursor: pointer;
+      transition: all var(--tr); font-family: 'Inter', sans-serif; display: inline-block;
+    }
+    .btn-g:hover { border-color: var(--purple-l); color: var(--purple-l); }
+
+    /* Sphere */
+    #sphere-wrap {
+      position: absolute; right: 2%; top: 50%;
+      transform: translateY(-50%);
+      width: clamp(300px, 44vmin, 560px);
+      height: clamp(300px, 44vmin, 560px);
+      cursor: pointer; z-index: 5;
+    }
+    #sphere-wrap canvas { width: 100% !important; height: 100% !important; }
+    .sphere-hint {
+      position: absolute; bottom: -28px; left: 50%;
+      transform: translateX(-50%);
+      font-size: .66rem; letter-spacing: .18em; color: var(--text-m);
+      white-space: nowrap; opacity: .7; pointer-events: none;
+    }
+    .sphere-glow-bg {
+      position: absolute; right: 15%; top: 50%;
+      transform: translateY(-50%);
+      width: 480px; height: 480px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(124,58,237,.13) 0%, transparent 70%);
+      pointer-events: none; z-index: 1;
+    }
+
+    /* Scroll indicator */
+    .scroll-ind {
+      position: absolute; bottom: 38px; left: 50%;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      z-index: 10; pointer-events: none;
+    }
+    .scroll-ind span {
+      font-size: .62rem; letter-spacing: .22em; color: var(--text-m);
+    }
+    .scroll-line {
+      width: 1px; height: 42px;
+      background: linear-gradient(to bottom, var(--purple-l), transparent);
+      animation: scrollAnim 1.6s ease-in-out infinite;
+    }
+    @keyframes scrollAnim {
+      0% { transform: scaleY(0); transform-origin: top; }
+      50% { transform: scaleY(1); transform-origin: top; }
+      51% { transform: scaleY(1); transform-origin: bottom; }
+      100% { transform: scaleY(0); transform-origin: bottom; }
+    }
+
+    /* =============================================
+       MARQUEE
+    ============================================= */
+    .marquee-wrap {
+      padding: 18px 0;
+      border-top: 1px solid var(--glass-b);
+      border-bottom: 1px solid var(--glass-b);
+      overflow: hidden;
+      background: rgba(124,58,237,.03);
+    }
+    .marquee-track {
+      display: flex; width: max-content;
+      animation: mq 28s linear infinite;
+    }
+    .mq-item {
+      display: flex; align-items: center; gap: 18px;
+      padding: 0 28px; white-space: nowrap;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: .78rem; font-weight: 500; letter-spacing: .14em;
+      color: var(--text-m);
+    }
+    .mq-sep {
+      width: 4px; height: 4px; border-radius: 50%;
+      background: var(--purple-l); flex-shrink: 0;
+    }
+    @keyframes mq { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* =============================================
+       SHARED SECTION STYLES
+    ============================================= */
+    section { padding: 120px 60px; }
+
+    .sec-label {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 5px 15px; background: var(--glass);
+      border: 1px solid var(--glass-b); border-radius: 100px;
+      font-size: .68rem; letter-spacing: .16em; color: var(--purple-l);
+      font-weight: 600; margin-bottom: 22px;
+    }
+    .sec-label::before {
+      content: ''; width: 4px; height: 4px; border-radius: 50%;
+      background: var(--purple-l);
+    }
+
+    .sec-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1.9rem, 3.8vw, 3.1rem);
+      font-weight: 700; line-height: 1.14; letter-spacing: -.02em;
+      margin-bottom: 16px;
+    }
+
+    .sec-desc {
+      font-size: .97rem; line-height: 1.72; color: var(--text-m);
+      max-width: 540px; margin-bottom: 56px;
+    }
+
+    /* Reveal animations */
+    .rv { opacity: 0; transform: translateY(44px); }
+    .rv.on { opacity: 1; transform: none; transition: opacity .85s ease, transform .85s cubic-bezier(.22,1,.36,1); }
+
+    /* =============================================
+       SERVICES
+    ============================================= */
+    #services { background: linear-gradient(180deg, var(--bg), var(--bg2) 100%); }
+
+    .svc-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px;
+    }
+    .svc-card {
+      position: relative; padding: 36px 30px;
+      background: var(--glass); border: 1px solid var(--glass-b);
+      border-radius: var(--r); cursor: pointer; overflow: hidden;
+      transition: all var(--tr);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    }
+    .svc-card::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(124,58,237,.12) 0%, transparent 60%);
+      opacity: 0; transition: opacity var(--tr); border-radius: inherit;
+    }
+    .svc-card:hover {
+      border-color: rgba(124,58,237,.32);
+      transform: translateY(-5px);
+      box-shadow: 0 24px 60px rgba(0,0,0,.45), 0 0 0 1px rgba(124,58,237,.18);
+    }
+    .svc-card:hover::before { opacity: 1; }
+
+    .svc-num {
+      font-family: 'Space Grotesk', sans-serif; font-size: .68rem;
+      font-weight: 600; letter-spacing: .22em; color: var(--purple-l); margin-bottom: 18px;
+    }
+    .svc-icon {
+      width: 46px; height: 46px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(124,58,237,.14); border-radius: 12px;
+      margin-bottom: 18px; font-size: 1.25rem;
+    }
+    .svc-title {
+      font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem;
+      font-weight: 600; margin-bottom: 11px; line-height: 1.3;
+    }
+    .svc-desc {
+      font-size: .83rem; line-height: 1.65; color: var(--text-m); margin-bottom: 22px;
+    }
+    .svc-arr {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: .78rem; font-weight: 600; letter-spacing: .04em;
+      color: var(--purple-l); transition: gap var(--tr);
+    }
+    .svc-card:hover .svc-arr { gap: 13px; }
+    .card-corner {
+      position: absolute; top: 0; right: 0;
+      width: 100px; height: 100px; pointer-events: none;
+      background: radial-gradient(circle at top right, rgba(124,58,237,.1), transparent 70%);
+      border-radius: 0 var(--r) 0 0;
+    }
+
+    /* =============================================
+       PROCESS
+    ============================================= */
+    #process {
+      background: var(--bg); position: relative;
+    }
+    #process::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 100%, rgba(124,58,237,.07) 0%, transparent 55%);
+      pointer-events: none;
+    }
+    .proc-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1px; background: var(--glass-b);
+      border: 1px solid var(--glass-b); border-radius: var(--r); overflow: hidden;
+    }
+    .proc-step {
+      padding: 46px 34px; background: var(--bg);
+      position: relative; transition: background var(--tr);
+    }
+    .proc-step:hover { background: rgba(124,58,237,.05); }
+    .proc-n {
+      font-family: 'Space Grotesk', sans-serif; font-size: 2.8rem;
+      font-weight: 700; letter-spacing: -.05em; display: block;
+      background: linear-gradient(135deg, var(--purple-l), rgba(167,139,250,.15));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; margin-bottom: 22px;
+    }
+    .proc-title {
+      font-family: 'Space Grotesk', sans-serif; font-size: 1.05rem;
+      font-weight: 600; margin-bottom: 11px;
+    }
+    .proc-desc { font-size: .83rem; line-height: 1.65; color: var(--text-m); }
+
+    /* =============================================
+       STATS
+    ============================================= */
+    #stats { padding: 80px 60px; background: var(--bg2); }
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1px; background: var(--glass-b);
+      border: 1px solid var(--glass-b); border-radius: var(--r); overflow: hidden;
+    }
+    .stat-item {
+      padding: 50px 36px; background: var(--bg2);
+      text-align: center; transition: background var(--tr);
+    }
+    .stat-item:hover { background: rgba(124,58,237,.06); }
+    .stat-n {
+      font-family: 'Space Grotesk', sans-serif; font-size: 3.4rem;
+      font-weight: 700; letter-spacing: -.04em; display: block;
+      background: linear-gradient(135deg, var(--purple-l), var(--cyan-l));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; margin-bottom: 6px;
+    }
+    .stat-l { font-size: .78rem; letter-spacing: .1em; color: var(--text-m); }
+
+    /* =============================================
+       ABOUT
+    ============================================= */
+    #about {
+      background: var(--bg);
+      display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+    }
+    .about-cards {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    }
+    .abt-card {
+      padding: 28px 24px; background: var(--glass);
+      border: 1px solid var(--glass-b); border-radius: var(--r);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      transition: all var(--tr);
+    }
+    .abt-card:hover {
+      border-color: rgba(124,58,237,.28);
+      background: rgba(124,58,237,.05);
+    }
+    .abt-icon { font-size: 1.45rem; margin-bottom: 12px; display: block; }
+    .abt-title {
+      font-family: 'Space Grotesk', sans-serif; font-size: .9rem;
+      font-weight: 600; margin-bottom: 6px;
+    }
+    .abt-desc { font-size: .78rem; line-height: 1.6; color: var(--text-m); }
+
+    /* =============================================
+       CONTACT
+    ============================================= */
+    #contact {
+      background: linear-gradient(180deg, var(--bg2), var(--bg) 100%);
+      position: relative;
+    }
+    #contact::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(124,58,237,.1) 0%, transparent 55%);
+      pointer-events: none;
+    }
+    .contact-header { text-align: center; margin-bottom: 60px; position: relative; z-index: 1; }
+    .contact-header .sec-desc { margin: 0 auto; }
+
+    .contact-inner {
+      display: grid; grid-template-columns: 1fr 1.3fr; gap: 60px;
+      align-items: start; position: relative; z-index: 1;
+    }
+
+    .contact-info-item {
+      display: flex; align-items: center; gap: 16px;
+      padding: 20px 22px; background: var(--glass);
+      border: 1px solid var(--glass-b); border-radius: 12px;
+      margin-bottom: 12px; transition: all var(--tr);
+    }
+    .contact-info-item:hover {
+      border-color: rgba(124,58,237,.3); background: rgba(124,58,237,.05);
+    }
+    .ci-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: rgba(124,58,237,.15);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .95rem; flex-shrink: 0;
+    }
+    .ci-label {
+      font-size: .68rem; letter-spacing: .1em; color: var(--text-m); margin-bottom: 2px; display: block;
+    }
+    .ci-val {
+      font-size: .88rem; font-weight: 500; color: var(--text);
+      text-decoration: none; display: block; transition: color var(--tr);
+    }
+    .ci-val:hover { color: var(--purple-l); }
+
+    .regions {
+      margin-top: 30px; padding-top: 28px; border-top: 1px solid var(--glass-b);
+    }
+    .regions-label {
+      font-size: .68rem; letter-spacing: .12em; color: var(--text-m); margin-bottom: 14px;
+    }
+    .regions-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .rtag {
+      padding: 4px 12px; border-radius: 100px;
+      background: var(--glass); border: 1px solid var(--glass-b);
+      font-size: .73rem; color: var(--text-m);
+    }
+
+    .form-card {
+      padding: 48px; background: var(--glass);
+      border: 1px solid var(--glass-b); border-radius: var(--r);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    }
+    .form-card h3 {
+      font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem;
+      font-weight: 600; margin-bottom: 6px;
+    }
+    .form-card .form-sub {
+      font-size: .83rem; color: var(--text-m); margin-bottom: 30px;
+    }
+    .fg { margin-bottom: 18px; }
+    .fg label {
+      display: block; font-size: .7rem; letter-spacing: .1em;
+      color: var(--text-m); margin-bottom: 7px;
+    }
+    .fg input, .fg textarea {
+      width: 100%; padding: 13px 16px;
+      background: rgba(255,255,255,.04); border: 1px solid var(--glass-b);
+      border-radius: 10px; color: var(--text); font-size: .88rem;
+      font-family: 'Inter', sans-serif; outline: none;
+      transition: border-color var(--tr), background var(--tr);
+    }
+    .fg input:focus, .fg textarea:focus {
+      border-color: rgba(124,58,237,.5); background: rgba(124,58,237,.05);
+    }
+    .fg textarea { resize: vertical; min-height: 115px; }
+    .fg-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-msg {
+      display: none; text-align: center; padding: 16px;
+      background: rgba(34,211,238,.1); border: 1px solid rgba(34,211,238,.25);
+      border-radius: 10px; font-size: .88rem; color: var(--cyan-l);
+      margin-top: 14px;
+    }
+    .form-msg.show { display: block; }
+
+    /* =============================================
+       FOOTER
+    ============================================= */
+    footer {
+      padding: 44px 60px; border-top: 1px solid var(--glass-b);
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--bg);
+    }
+    .foot-logo {
+      font-family: 'Space Grotesk', sans-serif; font-weight: 700;
+      font-size: .95rem; letter-spacing: .18em; color: var(--text);
+    }
+    .foot-logo em { color: var(--purple-l); font-style: normal; }
+    .foot-copy { font-size: .75rem; color: var(--text-m); letter-spacing: .04em; }
+    .foot-links { display: flex; gap: 22px; }
+    .foot-links a {
+      font-size: .75rem; color: var(--text-m); text-decoration: none;
+      transition: color var(--tr);
+    }
+    .foot-links a:hover { color: var(--text); }
+
+    /* =============================================
+       MODALS
+    ============================================= */
+    .modal-ov {
+      position: fixed; inset: 0; z-index: 5000;
+      display: flex; align-items: center; justify-content: center; padding: 20px;
+      background: rgba(5,5,15,.82);
+      backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
+      opacity: 0; visibility: hidden;
+      transition: opacity .3s ease, visibility .3s ease;
+    }
+    .modal-ov.open { opacity: 1; visibility: visible; }
+    .modal {
+      width: 100%; max-width: 680px; max-height: 88vh; overflow-y: auto;
+      padding: 56px; background: rgba(12,12,28,.97);
+      border: 1px solid var(--glass-b); border-radius: 22px; position: relative;
+      transform: translateY(28px);
+      transition: transform .35s cubic-bezier(.22,1,.36,1);
+    }
+    .modal-ov.open .modal { transform: translateY(0); }
+    .modal-x {
+      position: absolute; top: 22px; right: 22px;
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--glass); border: 1px solid var(--glass-b);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 1rem; color: var(--text);
+      transition: all var(--tr); line-height: 1;
+    }
+    .modal-x:hover { background: rgba(124,58,237,.2); border-color: var(--purple-l); }
+    .modal-num {
+      font-family: 'Space Grotesk', sans-serif; font-size: .68rem;
+      font-weight: 600; letter-spacing: .22em; color: var(--purple-l); margin-bottom: 14px;
+    }
+    .modal-title {
+      font-family: 'Space Grotesk', sans-serif; font-size: 1.95rem;
+      font-weight: 700; line-height: 1.2; margin-bottom: 22px;
+    }
+    .modal-hr { height: 1px; background: var(--glass-b); margin-bottom: 26px; }
+    .modal-body { font-size: .93rem; line-height: 1.78; color: var(--text-m); }
+    .modal-list { list-style: none; margin-top: 22px; }
+    .modal-list li {
+      padding: 11px 0; border-bottom: 1px solid var(--glass-b);
+      font-size: .88rem; color: var(--text-m);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .modal-list li::before {
+      content: ''; width: 5px; height: 5px; border-radius: 50%;
+      background: var(--purple-l); flex-shrink: 0;
+    }
+    .modal-cta { display: inline-block; margin-top: 32px; }
+
+    /* =============================================
+       RESPONSIVE
+    ============================================= */
+    @media (max-width: 1100px) {
+      .svc-grid { grid-template-columns: repeat(2, 1fr); }
+      .proc-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 860px) {
+      nav { padding: 16px 24px; }
+      nav.scrolled { padding: 11px 24px; }
+      .nav-links { display: none; }
+      section { padding: 80px 24px; }
+      #hero { padding: 0; }
+      .hero-content { padding: 100px 24px 60px; max-width: 100%; }
+      #sphere-wrap { display: none; }
+      .sphere-glow-bg { display: none; }
+      .contact-inner { grid-template-columns: 1fr; gap: 32px; }
+      #about { grid-template-columns: 1fr; gap: 40px; padding: 80px 24px; }
+      footer { flex-direction: column; gap: 18px; text-align: center; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      #stats { padding: 60px 24px; }
+    }
+    @media (max-width: 580px) {
+      .svc-grid { grid-template-columns: 1fr; }
+      .proc-grid { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .about-cards { grid-template-columns: 1fr; }
+      .fg-row { grid-template-columns: 1fr; }
+      .form-card { padding: 28px 20px; }
+      .modal { padding: 36px 24px; }
+    }
+  </style>
+</head>
+<body class="loading">
+
+  <!-- ========== CURSOR ========== -->
+  <div class="cur" id="cur-outer"></div>
+  <div class="cur" id="cur-inner"></div>
+
+  <!-- ========== PRELOADER ========== -->
+  <div id="preloader">
+    <p class="pre-logo">AKSENT<em>.</em></p>
+    <div class="pre-bar"><div class="pre-fill" id="pre-fill"></div></div>
+    <p class="pre-pct" id="pre-pct">0%</p>
+  </div>
+
+  <!-- ========== NAV ========== -->
+  <nav id="nav">
+    <a class="nav-logo" href="#hero">AKSENT<em>.</em></a>
+    <ul class="nav-links">
+      <li><a href="#services">
+        <span data-lang="sr">Usluge</span>
+        <span data-lang="en" style="display:none">Services</span>
+      </a></li>
+      <li><a href="#process">
+        <span data-lang="sr">Proces</span>
+        <span data-lang="en" style="display:none">Process</span>
+      </a></li>
+      <li><a href="#about">
+        <span data-lang="sr">O nama</span>
+        <span data-lang="en" style="display:none">About us</span>
+      </a></li>
+      <li><a href="#contact">
+        <span data-lang="sr">Kontakt</span>
+        <span data-lang="en" style="display:none">Contact</span>
+      </a></li>
+    </ul>
+    <div class="nav-right">
+      <div class="lang-toggle">
+        <button class="lang-btn active" id="btn-sr" onclick="setLang('sr')">SR</button>
+        <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+      </div>
+      <a href="#contact" class="nav-cta">
+        <span data-lang="sr">Pokrenimo projekat</span>
+        <span data-lang="en" style="display:none">Start a project</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- ========== HERO ========== -->
+  <section id="hero">
+    <canvas id="p-canvas"></canvas>
+    <div class="amb amb-1"></div>
+    <div class="amb amb-2"></div>
+    <div class="sphere-glow-bg"></div>
+
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        <span data-lang="sr">Srbija &middot; Hrvatska &middot; BiH &middot; Crna Gora</span>
+        <span data-lang="en" style="display:none">Serbia &middot; Croatia &middot; Bosnia &middot; Montenegro</span>
+      </div>
+
+      <h1 class="hero-h1">
+        <span class="line"><span class="line-inner" data-lang="sr">Digitalni sistemi</span><span class="line-inner" data-lang="en" style="display:none">Digital systems</span></span>
+        <span class="line"><span class="line-inner grad" data-lang="sr">koji donose</span><span class="line-inner grad" data-lang="en" style="display:none">that drive</span></span>
+        <span class="line"><span class="line-inner" data-lang="sr" style="color:var(--purple-l)">prihod.</span><span class="line-inner" data-lang="en" style="display:none;color:var(--purple-l)">revenue.</span></span>
+      </h1>
+
+      <p class="hero-desc">
+        <span data-lang="sr">Gradimo premium digitalna iskustva koja privlače prave klijente, jačaju poverenje i pretvaraju posete u konverzije.</span>
+        <span data-lang="en" style="display:none">We build premium digital experiences that attract the right clients, build trust, and turn visits into conversions.</span>
+      </p>
+
+      <div class="hero-actions">
+        <a href="#contact" class="btn-p">
+          <span data-lang="sr">Pokrenimo projekat</span>
+          <span data-lang="en" style="display:none">Start a project</span>
+        </a>
+        <a href="#services" class="btn-g">
+          <span data-lang="sr">Naše usluge</span>
+          <span data-lang="en" style="display:none">Our services</span>
+        </a>
+      </div>
+    </div>
+
+    <div id="sphere-wrap">
+      <div id="sphere-mount"></div>
+      <p class="sphere-hint">
+        <span data-lang="sr">Klikni za interakciju</span>
+        <span data-lang="en" style="display:none">Click to interact</span>
+      </p>
+    </div>
+
+    <div class="scroll-ind">
+      <span data-lang="sr">SKROLUJ</span>
+      <span data-lang="en" style="display:none">SCROLL</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- ========== MARQUEE ========== -->
+  <div class="marquee-wrap">
+    <div class="marquee-track" id="mq-track"></div>
+  </div>
+
+  <!-- ========== SERVICES ========== -->
+  <section id="services">
+    <div class="rv" id="svc-hdr">
+      <p class="sec-label">
+        <span data-lang="sr">STA RADIMO</span>
+        <span data-lang="en" style="display:none">WHAT WE DO</span>
+      </p>
+      <h2 class="sec-title">
+        <span data-lang="sr">Usluge koje <span class="grad">pokrecu rast</span></span>
+        <span data-lang="en" style="display:none">Services that <span class="grad">drive growth</span></span>
+      </h2>
+      <p class="sec-desc">
+        <span data-lang="sr">Od strategije do izvedbe, pokrivamo svaki aspekt vašeg digitalnog prisustva.</span>
+        <span data-lang="en" style="display:none">From strategy to execution, we cover every aspect of your digital presence.</span>
+      </p>
+    </div>
+    <div class="svc-grid rv" id="svc-grid"></div>
+  </section>
+
+  <!-- ========== PROCESS ========== -->
+  <section id="process">
+    <div class="rv" style="text-align:center;margin-bottom:56px">
+      <p class="sec-label" style="display:inline-flex">
+        <span data-lang="sr">KAKO RADIMO</span>
+        <span data-lang="en" style="display:none">HOW WE WORK</span>
+      </p>
+      <h2 class="sec-title">
+        <span data-lang="sr">Naš <span class="grad">proces</span></span>
+        <span data-lang="en" style="display:none">Our <span class="grad">process</span></span>
+      </h2>
+    </div>
+    <div class="proc-grid rv" id="proc-grid"></div>
+  </section>
+
+  <!-- ========== STATS ========== -->
+  <div id="stats">
+    <div class="stats-grid rv" id="stats-grid"></div>
+  </div>
+
+  <!-- ========== ABOUT ========== -->
+  <section id="about">
+    <div class="rv">
+      <p class="sec-label">
+        <span data-lang="sr">O NAMA</span>
+        <span data-lang="en" style="display:none">ABOUT US</span>
+      </p>
+      <h2 class="sec-title">
+        <span data-lang="sr">Digitalni partner koji <span class="grad">razume vaš biznis</span></span>
+        <span data-lang="en" style="display:none">A digital partner who <span class="grad">understands your business</span></span>
+      </h2>
+      <p class="sec-desc">
+        <span data-lang="sr">Nismo agencija koja pravi lepe sajtove. Mi smo tim koji razume prodaju, konverzije i dugoročno pozicioniranje. Svaki projekat tretiramo kao investiciju, a ne trošak.</span>
+        <span data-lang="en" style="display:none">We are not an agency that makes pretty websites. We are a team that understands sales, conversions and long-term positioning. We treat every project as an investment, not an expense.</span>
+      </p>
+      <a href="#contact" class="btn-p" style="display:inline-block">
+        <span data-lang="sr">Razgovarajmo</span>
+        <span data-lang="en" style="display:none">Let's talk</span>
+      </a>
+    </div>
+    <div class="about-cards rv" id="abt-cards"></div>
+  </section>
+
+  <!-- ========== CONTACT ========== -->
+  <section id="contact">
+    <div class="contact-header rv">
+      <p class="sec-label" style="display:inline-flex">
+        <span data-lang="sr">KONTAKT</span>
+        <span data-lang="en" style="display:none">CONTACT</span>
+      </p>
+      <h2 class="sec-title">
+        <span data-lang="sr">Spremi da <span class="grad">izgradimo nešto zajedno?</span></span>
+        <span data-lang="en" style="display:none">Ready to <span class="grad">build something together?</span></span>
+      </h2>
+      <p class="sec-desc">
+        <span data-lang="sr">Pišite nam, nazovite ili popunite formu. Odgovaramo u roku od 24 sata.</span>
+        <span data-lang="en" style="display:none">Write to us, call us or fill out the form. We respond within 24 hours.</span>
+      </p>
+    </div>
+
+    <div class="contact-inner">
+      <div class="rv">
+        <div class="contact-info-item">
+          <div class="ci-icon">📧</div>
+          <div>
+            <span class="ci-label">EMAIL</span>
+            <a href="mailto:info.aksentconsulting@gmail.com" class="ci-val">info.aksentconsulting@gmail.com</a>
+          </div>
+        </div>
+        <div class="contact-info-item">
+          <div class="ci-icon">📱</div>
+          <div>
+            <span class="ci-label">
+              <span data-lang="sr">TELEFON</span>
+              <span data-lang="en" style="display:none">PHONE</span>
+            </span>
+            <a href="tel:+381638347718" class="ci-val">+381 63 834 77 18</a>
+          </div>
+        </div>
+        <div class="contact-info-item">
+          <div class="ci-icon">📷</div>
+          <div>
+            <span class="ci-label">INSTAGRAM</span>
+            <a href="https://instagram.com/peccatoredesign" target="_blank" rel="noopener" class="ci-val">@peccatoredesign</a>
+          </div>
+        </div>
+
+        <div class="regions">
+          <p class="regions-label">
+            <span data-lang="sr">RADIMO SA KLIJENTIMA IZ</span>
+            <span data-lang="en" style="display:none">WE WORK WITH CLIENTS FROM</span>
+          </p>
+          <div class="regions-tags">
+            <span class="rtag">🇷🇸 Srbija</span>
+            <span class="rtag">🇭🇷 Hrvatska</span>
+            <span class="rtag">🇧🇦 BiH</span>
+            <span class="rtag">🇲🇪 Crna Gora</span>
+            <span class="rtag">🇲🇰 Makedonija</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-card rv">
+        <h3>
+          <span data-lang="sr">Pošaljite upit</span>
+          <span data-lang="en" style="display:none">Send an inquiry</span>
+        </h3>
+        <p class="form-sub">
+          <span data-lang="sr">Odgovaramo u roku od 24 sata.</span>
+          <span data-lang="en" style="display:none">We respond within 24 hours.</span>
+        </p>
+        <form id="cform" onsubmit="handleForm(event)">
+          <div class="fg-row">
+            <div class="fg">
+              <label>
+                <span data-lang="sr">IME</span>
+                <span data-lang="en" style="display:none">NAME</span>
+              </label>
+              <input type="text" name="name" required>
+            </div>
+            <div class="fg">
+              <label>EMAIL</label>
+              <input type="email" name="email" required>
+            </div>
+          </div>
+          <div class="fg">
+            <label>
+              <span data-lang="sr">PORUKA</span>
+              <span data-lang="en" style="display:none">MESSAGE</span>
+            </label>
+            <textarea name="message" required></textarea>
+          </div>
+          <button type="submit" class="btn-p" style="width:100%;justify-content:center;text-align:center">
+            <span data-lang="sr">Pošalji poruku &rarr;</span>
+            <span data-lang="en" style="display:none">Send message &rarr;</span>
+          </button>
+          <div class="form-msg" id="form-msg">
+            <span data-lang="sr">Hvala! Javićemo se ubrzo.</span>
+            <span data-lang="en" style="display:none">Thank you! We will be in touch soon.</span>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer>
+    <div class="foot-logo">AKSENT<em>.</em></div>
+    <p class="foot-copy">
+      <span data-lang="sr">&copy; 2025 Aksent Consulting. Sva prava zadržana.</span>
+      <span data-lang="en" style="display:none">&copy; 2025 Aksent Consulting. All rights reserved.</span>
+    </p>
+    <div class="foot-links">
+      <a href="#services">
+        <span data-lang="sr">Usluge</span>
+        <span data-lang="en" style="display:none">Services</span>
+      </a>
+      <a href="#contact">
+        <span data-lang="sr">Kontakt</span>
+        <span data-lang="en" style="display:none">Contact</span>
+      </a>
+    </div>
+  </footer>
+
+  <!-- ========== SERVICE MODALS (rendered by JS) ========== -->
+  <div id="modals-root"></div>
+
+  <!-- =============================================
+       JAVASCRIPT
+  ============================================= -->
+  <script>
+  /* -----------------------------------------------
+     CONTENT DATA
+  ----------------------------------------------- */
+  const CONTENT = {
+    services: {
+      sr: [
+        {
+          num: "01", icon: "🌐",
+          title: "Web dizajn & razvoj",
+          desc: "Sajtovi koji prodaju. Svaki piksel ima svrhu, svaka interakcija vodi ka konverziji.",
+          cta: "Saznaj više",
+          modal: {
+            title: "Web dizajn & razvoj",
+            body: "Kreiramo premium web iskustva koja kombinuju izuzetan dizajn sa tehničkom preciznošću. Svaki sajt je prilagođen vašim poslovnim ciljevima i optimizovan za konverzije.",
+            items: ["Prilagođeni dizajn bez šablona","Mobilna i desktop optimizacija","Brzo učitavanje i SEO struktura","CMS integracija i lako upravljanje","A/B testiranje i analitika"]
+          }
+        },
+        {
+          num: "02", icon: "⚡",
+          title: "Aplikacije & softver",
+          desc: "Od ideje do produkcije. Razvijamo digitalna rešenja koja rešavaju stvarne poslovne izazove.",
+          cta: "Saznaj više",
+          modal: {
+            title: "Aplikacije & softver",
+            body: "Razvijamo web i mobilne aplikacije, API integracije i softverska rešenja koja rešavaju stvarne poslovne probleme i skaliraju uz vaš biznis.",
+            items: ["Web i mobilne aplikacije","API integracije i sistemi","Admin paneli i dashboardi","SaaS platforme i alati","Tehnička podrška i skaliranje"]
+          }
+        },
+        {
+          num: "03", icon: "🤖",
+          title: "AI automatizacija",
+          desc: "Automatizujte repetitivne procese i oslobodite tim za ono što stvarno donosi vrednost.",
+          cta: "Saznaj više",
+          modal: {
+            title: "AI automatizacija",
+            body: "Implementiramo AI rešenja koja štede vreme vašem timu i povećavaju efikasnost. Od automatizovanih tokova rada do chatbotova i analitičkih alata.",
+            items: ["Automatizacija poslovnih procesa","AI chatbotovi i asistenti","Analitika i prediktivni modeli","Integracija sa postojećim sistemima","Kontinualno učenje i optimizacija"]
+          }
+        },
+        {
+          num: "04", icon: "✦",
+          title: "Brand identitet",
+          desc: "Vizuelni jezik koji se pamti i gradi poverenje pre prve reči sa klijentom.",
+          cta: "Saznaj više",
+          modal: {
+            title: "Brand identitet",
+            body: "Kreiramo celovite vizuelne identitete koji komuniciraju vrednosti vašeg biznisa i ostavljaju trajan utisak na vašu ciljnu grupu.",
+            items: ["Logotip i vizuelni identitet","Brand knjiga i smernice","Marketing materijali","Digitalni i print dizajn","Brand strategija i pozicioniranje"]
+          }
+        },
+        {
+          num: "05", icon: "🛒",
+          title: "E-commerce & prodaja",
+          desc: "Prodajte bez granica. Optimizovano iskustvo kupovine na svakom kanalu.",
+          cta: "Saznaj više",
+          modal: {
+            title: "E-commerce & prodaja",
+            body: "Gradimo e-commerce platforme koje prodaju. Fokus je na korisnickom iskustvu, brzini i konverzijama — od malih online prodavnica do kompleksnih B2B sistema.",
+            items: ["Shopify, WooCommerce, custom rešenja","Optimizacija procesa naplate","Upravljanje zalihama i automatizacija","Email marketing i retargeting","Analitika i optimizacija konverzija"]
+          }
+        },
+        {
+          num: "06", icon: "◎",
+          title: "Konsultacije",
+          desc: "Strateška podrška u svakoj fazi digitalnog razvoja vašeg biznisa.",
+          cta: "Saznaj više",
+          modal: {
+            title: "Konsultacije",
+            body: "Pružamo stratešku podršku kompanijama koje žele da unaprede digitalno prisustvo ili reše specificne poslovne izazove. Bez prodajnog pritiska, samo konkretni saveti.",
+            items: ["Digitalna strategija i roadmap","Analiza konkurencije i tržišta","Tehnički audit i optimizacija","CRO konsultacije","Mentorstvo i team training"]
+          }
+        }
+      ],
+      en: [
+        {
+          num: "01", icon: "🌐",
+          title: "Web design & development",
+          desc: "Websites that sell. Every pixel has purpose, every interaction leads to conversion.",
+          cta: "Learn more",
+          modal: {
+            title: "Web design & development",
+            body: "We create premium web experiences that combine exceptional design with technical precision. Every site is tailored to your business goals and optimized for conversions.",
+            items: ["Custom design without templates","Mobile and desktop optimization","Fast loading and SEO structure","CMS integration and easy management","A/B testing and analytics"]
+          }
+        },
+        {
+          num: "02", icon: "⚡",
+          title: "Apps & software",
+          desc: "From idea to production. We develop digital solutions that solve real business challenges.",
+          cta: "Learn more",
+          modal: {
+            title: "Apps & software",
+            body: "We develop web and mobile applications, API integrations and software solutions that solve real business problems and scale with your business.",
+            items: ["Web and mobile applications","API integrations and systems","Admin panels and dashboards","SaaS platforms and tools","Technical support and scaling"]
+          }
+        },
+        {
+          num: "03", icon: "🤖",
+          title: "AI automation",
+          desc: "Automate repetitive processes and free your team for what truly drives value.",
+          cta: "Learn more",
+          modal: {
+            title: "AI automation",
+            body: "We implement AI solutions that save your team time and increase efficiency. From automated workflows to chatbots and analytical tools.",
+            items: ["Business process automation","AI chatbots and assistants","Analytics and predictive models","Integration with existing systems","Continuous learning and optimization"]
+          }
+        },
+        {
+          num: "04", icon: "✦",
+          title: "Brand identity",
+          desc: "Visual language that is remembered and builds trust before the first word with a client.",
+          cta: "Learn more",
+          modal: {
+            title: "Brand identity",
+            body: "We create complete visual identities that communicate your business values and leave a lasting impression on your target audience.",
+            items: ["Logo and visual identity","Brand book and guidelines","Marketing materials","Digital and print design","Brand strategy and positioning"]
+          }
+        },
+        {
+          num: "05", icon: "🛒",
+          title: "E-commerce & sales",
+          desc: "Sell without limits. Optimized shopping experience across every channel.",
+          cta: "Learn more",
+          modal: {
+            title: "E-commerce & sales",
+            body: "We build e-commerce platforms that sell. Focus is on user experience, speed and conversions — from small online stores to complex B2B systems.",
+            items: ["Shopify, WooCommerce, custom solutions","Checkout process optimization","Inventory management and automation","Email marketing and retargeting","Analytics and conversion optimization"]
+          }
+        },
+        {
+          num: "06", icon: "◎",
+          title: "Consulting",
+          desc: "Strategic support at every stage of your business's digital development.",
+          cta: "Learn more",
+          modal: {
+            title: "Consulting",
+            body: "We provide strategic support to companies looking to improve their digital presence or solve specific business challenges. No sales pressure, just concrete advice.",
+            items: ["Digital strategy and roadmap","Competitive and market analysis","Technical audit and optimization","CRO consulting","Mentorship and team training"]
+          }
+        }
+      ]
+    },
+    process: {
+      sr: [
+        { num: "01", title: "Analiza", desc: "Duboko razumevanje vašeg tržišta, ciljne grupe i poslovnih ciljeva pre svakog koraka." },
+        { num: "02", title: "Strategija", desc: "Arhitektura digitalnog sistema koji prodaje, gradi poverenje i radi za vas 24/7." },
+        { num: "03", title: "Kreacija", desc: "Premium dizajn i razvoj bez kompromisa. Svaki piksel, svaka linija koda ima svrhu." },
+        { num: "04", title: "Lansiranje", desc: "Optimizacija, testiranje i ulazak na tržište sa punom snagom i merljivim rezultatima." }
+      ],
+      en: [
+        { num: "01", title: "Analysis", desc: "Deep understanding of your market, target audience, and business goals before every step." },
+        { num: "02", title: "Strategy", desc: "Architecture of a digital system that sells, builds trust, and works for you 24/7." },
+        { num: "03", title: "Creation", desc: "Premium design and development without compromise. Every pixel, every line of code has purpose." },
+        { num: "04", title: "Launch", desc: "Optimization, testing, and market entry with full force and measurable results." }
+      ]
+    },
+    stats: {
+      sr: [
+        { num: "10+", label: "Godina iskustva" },
+        { num: "100+", label: "Završenih projekata" },
+        { num: "5", label: "Zemalja regiona" },
+        { num: "98%", label: "Zadovoljnih klijenata" }
+      ],
+      en: [
+        { num: "10+", label: "Years of experience" },
+        { num: "100+", label: "Completed projects" },
+        { num: "5", label: "Regional countries" },
+        { num: "98%", label: "Satisfied clients" }
+      ]
+    },
+    about: {
+      sr: [
+        { icon: "🎯", title: "Fokus na rezultate", desc: "Svaka odluka je vođena merljivim poslovnim ishodima." },
+        { icon: "⚡", title: "Brza isporuka", desc: "Respektujemo vaše rokove i održavamo tempo projekta." },
+        { icon: "🤝", title: "Transparentnost", desc: "Jasna komunikacija u svakom koraku bez skrivenih troškova." },
+        { icon: "🔄", title: "Podrška posle lansiranja", desc: "Naš odnos ne završava se isporukom projekta." }
+      ],
+      en: [
+        { icon: "🎯", title: "Results focused", desc: "Every decision is driven by measurable business outcomes." },
+        { icon: "⚡", title: "Fast delivery", desc: "We respect your deadlines and maintain project momentum." },
+        { icon: "🤝", title: "Transparency", desc: "Clear communication at every step with no hidden costs." },
+        { icon: "🔄", title: "Post-launch support", desc: "Our relationship does not end with project delivery." }
+      ]
+    },
+    marquee: {
+      sr: ["Web dizajn","Aplikacije","AI automatizacija","Brand identitet","E-commerce","Konsultacije","Digitalna strategija","Premium iskustva","Konverzije","Rast"],
+      en: ["Web design","Applications","AI automation","Brand identity","E-commerce","Consulting","Digital strategy","Premium experiences","Conversions","Growth"]
+    }
+  };
+
+  /* -----------------------------------------------
+     LANGUAGE
+  ----------------------------------------------- */
+  let LANG = localStorage.getItem('ak-lang') || 'sr';
+
+  function setLang(lang) {
+    LANG = lang;
+    localStorage.setItem('ak-lang', lang);
+    document.documentElement.lang = lang;
+
+    document.querySelectorAll('[data-lang]').forEach(el => {
+      el.style.display = el.getAttribute('data-lang') === lang ? '' : 'none';
+    });
+
+    document.getElementById('btn-sr').classList.toggle('active', lang === 'sr');
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+
+    renderAll();
+  }
+
+  /* -----------------------------------------------
+     RENDER
+  ----------------------------------------------- */
+  function renderAll() {
+    renderMarquee();
+    renderServices();
+    renderProcess();
+    renderStats();
+    renderAbout();
+    renderModals();
+  }
+
+  function renderMarquee() {
+    const items = CONTENT.marquee[LANG];
+    const doubled = [...items, ...items]; // duplicate for seamless loop
+    const track = document.getElementById('mq-track');
+    if (!track) return;
+    track.innerHTML = doubled.map(t =>
+      `<span class="mq-item">${t}<span class="mq-sep"></span></span>`
+    ).join('');
+  }
+
+  function renderServices() {
+    const grid = document.getElementById('svc-grid');
+    if (!grid) return;
+    grid.innerHTML = CONTENT.services[LANG].map((s, i) => `
+      <div class="svc-card" onclick="openModal(${i})" tabindex="0" role="button" aria-label="${s.title}">
+        <div class="card-corner"></div>
+        <p class="svc-num">${s.num}</p>
+        <div class="svc-icon">${s.icon}</div>
+        <h3 class="svc-title">${s.title}</h3>
+        <p class="svc-desc">${s.desc}</p>
+        <span class="svc-arr">${s.cta} &rarr;</span>
+      </div>
+    `).join('');
+  }
+
+  function renderProcess() {
+    const grid = document.getElementById('proc-grid');
+    if (!grid) return;
+    grid.innerHTML = CONTENT.process[LANG].map(s => `
+      <div class="proc-step">
+        <span class="proc-n">${s.num}</span>
+        <h3 class="proc-title">${s.title}</h3>
+        <p class="proc-desc">${s.desc}</p>
+      </div>
+    `).join('');
+  }
+
+  function renderStats() {
+    const grid = document.getElementById('stats-grid');
+    if (!grid) return;
+    grid.innerHTML = CONTENT.stats[LANG].map(s => `
+      <div class="stat-item">
+        <span class="stat-n">${s.num}</span>
+        <span class="stat-l">${s.label}</span>
+      </div>
+    `).join('');
+  }
+
+  function renderAbout() {
+    const cont = document.getElementById('abt-cards');
+    if (!cont) return;
+    cont.innerHTML = CONTENT.about[LANG].map(c => `
+      <div class="abt-card">
+        <span class="abt-icon">${c.icon}</span>
+        <h4 class="abt-title">${c.title}</h4>
+        <p class="abt-desc">${c.desc}</p>
+      </div>
+    `).join('');
+  }
+
+  function renderModals() {
+    const root = document.getElementById('modals-root');
+    if (!root) return;
+    root.innerHTML = CONTENT.services[LANG].map((s, i) => `
+      <div class="modal-ov" id="modal-${i}" onclick="closeModalOutside(event,${i})">
+        <div class="modal">
+          <button class="modal-x" onclick="closeModal(${i})" aria-label="Close">&#x2715;</button>
+          <p class="modal-num">${s.num} &mdash; ${LANG === 'sr' ? 'USLUGA' : 'SERVICE'}</p>
+          <h2 class="modal-title">${s.modal.title}</h2>
+          <div class="modal-hr"></div>
+          <div class="modal-body">
+            <p>${s.modal.body}</p>
+            <ul class="modal-list">
+              ${s.modal.items.map(item => `<li>${item}</li>`).join('')}
+            </ul>
+          </div>
+          <a href="#contact" class="btn-p modal-cta" onclick="closeModal(${i})">
+            ${LANG === 'sr' ? 'Pokrenimo projekat &rarr;' : 'Start a project &rarr;'}
+          </a>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  /* -----------------------------------------------
+     MODALS
+  ----------------------------------------------- */
+  function openModal(i) {
+    const el = document.getElementById('modal-' + i);
+    if (el) { el.classList.add('open'); document.body.style.overflow = 'hidden'; }
+  }
+  function closeModal(i) {
+    const el = document.getElementById('modal-' + i);
+    if (el) { el.classList.remove('open'); document.body.style.overflow = ''; }
+  }
+  function closeModalOutside(e, i) {
+    if (e.target.classList.contains('modal-ov')) closeModal(i);
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') document.querySelectorAll('.modal-ov.open').forEach((el, idx) => el.classList.remove('open'));
+  });
+
+  /* -----------------------------------------------
+     FORM
+  ----------------------------------------------- */
+  function handleForm(e) {
+    e.preventDefault();
+    const msg = document.getElementById('form-msg');
+    msg.classList.add('show');
+    e.target.reset();
+    setTimeout(() => msg.classList.remove('show'), 5000);
+  }
+
+  /* -----------------------------------------------
+     CURSOR
+  ----------------------------------------------- */
+  function initCursor() {
+    const outer = document.getElementById('cur-outer');
+    const inner = document.getElementById('cur-inner');
+    if (!outer || !inner) return;
+
+    let ox = window.innerWidth / 2, oy = window.innerHeight / 2;
+    let ix = ox, iy = oy;
+
+    document.addEventListener('mousemove', e => {
+      ix = e.clientX; iy = e.clientY;
+      inner.style.transform = `translate(${ix}px,${iy}px)`;
+    });
+
+    function lerp(a, b, t) { return a + (b - a) * t; }
+    function animCursor() {
+      ox = lerp(ox, ix, 0.12);
+      oy = lerp(oy, iy, 0.12);
+      outer.style.transform = `translate(${ox}px,${oy}px)`;
+      requestAnimationFrame(animCursor);
+    }
+    animCursor();
+
+    document.querySelectorAll('a, button, .svc-card, .abt-card, .proc-step, .stat-item, #sphere-wrap').forEach(el => {
+      el.addEventListener('mouseenter', () => document.body.classList.add('c-hover'));
+      el.addEventListener('mouseleave', () => document.body.classList.remove('c-hover'));
+    });
+  }
+
+  /* -----------------------------------------------
+     PRELOADER
+  ----------------------------------------------- */
+  function initPreloader(callback) {
+    const fill = document.getElementById('pre-fill');
+    const pct = document.getElementById('pre-pct');
+    let progress = 0;
+
+    const tick = setInterval(() => {
+      progress += Math.random() * 18 + 4;
+      if (progress >= 100) {
+        progress = 100;
+        clearInterval(tick);
+        fill.style.width = '100%';
+        pct.textContent = '100%';
+        setTimeout(() => {
+          const pre = document.getElementById('preloader');
+          pre.classList.add('out');
+          pre.addEventListener('animationend', () => {
+            pre.style.display = 'none';
+            document.body.classList.remove('loading');
+            callback();
+          }, { once: true });
+        }, 350);
+        return;
+      }
+      fill.style.width = progress + '%';
+      pct.textContent = Math.floor(progress) + '%';
+    }, 75);
+  }
+
+  /* -----------------------------------------------
+     PARTICLES (canvas background)
+  ----------------------------------------------- */
+  function initParticles() {
+    const canvas = document.getElementById('p-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    const COUNT = 180;
+    const pts = Array.from({ length: COUNT }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - .5) * .18,
+      vy: (Math.random() - .5) * .18,
+      r: Math.random() * 1.3 + .4,
+      a: Math.random() * .45 + .08,
+      c: Math.random() > .65 ? '#a78bfa' : Math.random() > .5 ? '#22d3ee' : '#ffffff'
+    }));
+
+    let mx = canvas.width / 2, my = canvas.height / 2;
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < pts.length; i++) {
+        const p = pts[i];
+        const dx = p.x - mx, dy = p.y - my;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 90) {
+          p.vx += (dx / dist) * .04;
+          p.vy += (dy / dist) * .04;
+        }
+        const spd = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+        if (spd > .9) { p.vx = (p.vx / spd) * .9; p.vy = (p.vy / spd) * .9; }
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0) p.x = canvas.width;
+        if (p.x > canvas.width) p.x = 0;
+        if (p.y < 0) p.y = canvas.height;
+        if (p.y > canvas.height) p.y = 0;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = p.c;
+        ctx.globalAlpha = p.a;
+        ctx.fill();
+
+        // Connect nearby
+        for (let j = i + 1; j < Math.min(pts.length, i + 8); j++) {
+          const q = pts[j];
+          const d2 = Math.hypot(p.x - q.x, p.y - q.y);
+          if (d2 < 110) {
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(q.x, q.y);
+            ctx.strokeStyle = p.c;
+            ctx.globalAlpha = (1 - d2 / 110) * .09;
+            ctx.lineWidth = .5;
+            ctx.stroke();
+          }
+        }
+      }
+      ctx.globalAlpha = 1;
+      requestAnimationFrame(draw);
+    }
+    draw();
+  }
+
+  /* -----------------------------------------------
+     THREE.JS SPHERE
+  ----------------------------------------------- */
+  function initSphere() {
+    const wrap = document.getElementById('sphere-wrap');
+    const mount = document.getElementById('sphere-mount');
+    if (!wrap || !mount || typeof THREE === 'undefined') return;
+
+    const W = wrap.clientWidth;
+    const H = wrap.clientHeight;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(55, W / H, .1, 1000);
+    camera.position.z = 5;
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(W, H);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setClearColor(0x000000, 0);
+    mount.style.width = '100%';
+    mount.style.height = '100%';
+    mount.appendChild(renderer.domElement);
+
+    // Inner sphere
+    const sGeo = new THREE.SphereGeometry(1.7, 64, 64);
+    const sMat = new THREE.MeshPhongMaterial({
+      color: 0x0d0525,
+      emissive: 0x180640,
+      transparent: true,
+      opacity: .82,
+      shininess: 80
+    });
+    const sMesh = new THREE.Mesh(sGeo, sMat);
+    scene.add(sMesh);
+
+    // Wireframe
+    const wGeo = new THREE.SphereGeometry(1.72, 22, 22);
+    const wMat = new THREE.MeshBasicMaterial({
+      color: 0x7c3aed,
+      wireframe: true,
+      transparent: true,
+      opacity: .22
+    });
+    const wMesh = new THREE.Mesh(wGeo, wMat);
+    scene.add(wMesh);
+
+    // Outer glow ring
+    const rGeo = new THREE.TorusGeometry(1.95, .015, 8, 100);
+    const rMat = new THREE.MeshBasicMaterial({ color: 0x22d3ee, transparent: true, opacity: .35 });
+    const ring = new THREE.Mesh(rGeo, rMat);
+    ring.rotation.x = Math.PI / 3.5;
+    scene.add(ring);
+
+    // Second ring
+    const r2Geo = new THREE.TorusGeometry(1.85, .008, 8, 100);
+    const r2Mat = new THREE.MeshBasicMaterial({ color: 0xa78bfa, transparent: true, opacity: .2 });
+    const ring2 = new THREE.Mesh(r2Geo, r2Mat);
+    ring2.rotation.x = -Math.PI / 4;
+    ring2.rotation.y = Math.PI / 6;
+    scene.add(ring2);
+
+    // Surface particles (golden ratio distribution)
+    const pGroup = new THREE.Group();
+    const pCount = 90;
+    for (let i = 0; i < pCount; i++) {
+      const phi = Math.acos(1 - 2 * (i + .5) / pCount);
+      const theta = Math.PI * (1 + Math.sqrt(5)) * i;
+      const r = 1.74;
+      const pGeo = new THREE.SphereGeometry(.018, 6, 6);
+      const pMat = new THREE.MeshBasicMaterial({
+        color: i % 3 === 0 ? 0xa78bfa : i % 3 === 1 ? 0x22d3ee : 0xffffff,
+        transparent: true, opacity: .75
+      });
+      const pm = new THREE.Mesh(pGeo, pMat);
+      pm.position.set(
+        r * Math.sin(phi) * Math.cos(theta),
+        r * Math.sin(phi) * Math.sin(theta),
+        r * Math.cos(phi)
+      );
+      pGroup.add(pm);
+    }
+    scene.add(pGroup);
+
+    // Lighting
+    scene.add(new THREE.AmbientLight(0x6d28d9, .9));
+    const pl1 = new THREE.PointLight(0x7c3aed, 2.5, 20);
+    pl1.position.set(4, 4, 5);
+    scene.add(pl1);
+    const pl2 = new THREE.PointLight(0x22d3ee, 1.2, 20);
+    pl2.position.set(-4, -3, 3);
+    scene.add(pl2);
+
+    // Mouse follow
+    let tmx = 0, tmy = 0;
+    document.addEventListener('mousemove', e => {
+      tmx = (e.clientX / window.innerWidth - .5) * 2;
+      tmy = (e.clientY / window.innerHeight - .5) * 2;
+    });
+
+    // Burst state
+    let burst = false;
+    let bParticles = [];
+    let reformTimer = null;
+
+    function doHide() {
+      if (typeof gsap !== 'undefined') {
+        gsap.to(sMat, { opacity: 0, duration: .3 });
+        gsap.to(wMat, { opacity: 0, duration: .3 });
+        gsap.to(rMat, { opacity: 0, duration: .3 });
+        gsap.to(r2Mat, { opacity: 0, duration: .3 });
+      } else {
+        sMat.opacity = 0; wMat.opacity = 0; rMat.opacity = 0; r2Mat.opacity = 0;
+      }
+      pGroup.children.forEach(c => { c.material.opacity = 0; });
+    }
+    function doShow() {
+      if (typeof gsap !== 'undefined') {
+        gsap.to(sMat, { opacity: .82, duration: 1.2 });
+        gsap.to(wMat, { opacity: .22, duration: 1.2 });
+        gsap.to(rMat, { opacity: .35, duration: 1.2 });
+        gsap.to(r2Mat, { opacity: .2, duration: 1.2 });
+      } else {
+        sMat.opacity = .82; wMat.opacity = .22; rMat.opacity = .35; r2Mat.opacity = .2;
+      }
+      pGroup.children.forEach(c => { c.material.opacity = .75; });
+    }
+
+    function doBurst() {
+      if (burst) return;
+      burst = true;
+      doHide();
+
+      for (let i = 0; i < 220; i++) {
+        const phi = Math.random() * Math.PI * 2;
+        const theta = Math.random() * Math.PI;
+        const r = 1.74;
+        const pGeo = new THREE.SphereGeometry(.022, 4, 4);
+        const pMat2 = new THREE.MeshBasicMaterial({
+          color: i % 3 === 0 ? 0xa78bfa : i % 3 === 1 ? 0x22d3ee : 0xffffff,
+          transparent: true, opacity: 1
+        });
+        const pm = new THREE.Mesh(pGeo, pMat2);
+        pm.position.set(
+          r * Math.sin(theta) * Math.cos(phi),
+          r * Math.sin(theta) * Math.sin(phi),
+          r * Math.cos(theta)
+        );
+        const speed = .04 + Math.random() * .12;
+        const vel = new THREE.Vector3(
+          (Math.random() - .5) * speed,
+          (Math.random() - .5) * speed,
+          (Math.random() - .5) * speed
+        );
+        scene.add(pm);
+        bParticles.push({ mesh: pm, vel, age: 0 });
+      }
+
+      if (reformTimer) clearTimeout(reformTimer);
+      reformTimer = setTimeout(() => {
+        bParticles.forEach(p => scene.remove(p.mesh));
+        bParticles = [];
+        burst = false;
+        doShow();
+      }, 3200);
+    }
+
+    wrap.addEventListener('click', doBurst);
+
+    // Animate
+    function animate() {
+      requestAnimationFrame(animate);
+
+      if (!burst) {
+        sMesh.rotation.y += .003;
+        sMesh.rotation.x += .001;
+        wMesh.rotation.y += .0045;
+        wMesh.rotation.x += .001;
+        pGroup.rotation.y += .006;
+        pGroup.rotation.z += .002;
+        ring.rotation.z += .004;
+        ring2.rotation.y += .003;
+        sMesh.rotation.y += tmx * .0015;
+        sMesh.rotation.x += tmy * .0015;
+        wMesh.rotation.y += tmx * .0015;
+        wMesh.rotation.x += tmy * .0015;
+      }
+
+      bParticles.forEach(p => {
+        p.mesh.position.add(p.vel);
+        p.vel.multiplyScalar(.976);
+        p.age++;
+        if (p.age > 60) p.mesh.material.opacity = Math.max(0, p.mesh.material.opacity - .012);
+      });
+
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+      const nW = wrap.clientWidth, nH = wrap.clientHeight;
+      camera.aspect = nW / nH;
+      camera.updateProjectionMatrix();
+      renderer.setSize(nW, nH);
+    });
+  }
+
+  /* -----------------------------------------------
+     SCROLL ANIMATIONS (GSAP + fallback)
+  ----------------------------------------------- */
+  function initScrollAnim() {
+    if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+      gsap.registerPlugin(ScrollTrigger);
+
+      document.querySelectorAll('.rv').forEach(el => {
+        gsap.from(el, {
+          y: 50,
+          opacity: 0,
+          duration: .9,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 86%',
+            once: true
+          }
+        });
+      });
+
+    } else {
+      // Fallback: IntersectionObserver
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add('on');
+            obs.unobserve(e.target);
+          }
+        });
+      }, { threshold: .1 });
+      document.querySelectorAll('.rv').forEach(el => obs.observe(el));
+    }
+  }
+
+  /* -----------------------------------------------
+     NAV SCROLL
+  ----------------------------------------------- */
+  function initNav() {
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 50);
+    }, { passive: true });
+  }
+
+  /* -----------------------------------------------
+     HERO HEADLINE REVEAL
+  ----------------------------------------------- */
+  function heroReveal() {
+    const lines = document.querySelectorAll('.hero-h1 .line-inner');
+    if (typeof gsap !== 'undefined') {
+      gsap.from(lines, { y: '110%', opacity: 0, duration: 1, stagger: .12, ease: 'power4.out', delay: .2 });
+      gsap.from('.hero-badge', { opacity: 0, y: 20, duration: .8, ease: 'power3.out', delay: .1 });
+      gsap.from('.hero-desc', { opacity: 0, y: 20, duration: .8, ease: 'power3.out', delay: .55 });
+      gsap.from('.hero-actions', { opacity: 0, y: 20, duration: .8, ease: 'power3.out', delay: .75 });
+      gsap.from('#sphere-wrap', { opacity: 0, scale: .85, duration: 1.2, ease: 'power3.out', delay: .4 });
+    } else {
+      lines.forEach((l, i) => {
+        l.style.transition = `opacity .9s ${i * .12 + .2}s, transform .9s ${i * .12 + .2}s`;
+        l.style.opacity = '1';
+        l.style.transform = 'none';
+      });
+    }
+  }
+
+  /* -----------------------------------------------
+     BOOT
+  ----------------------------------------------- */
+  document.addEventListener('DOMContentLoaded', () => {
+    // Initial state: hide all EN elements
+    setLang(LANG);
+
+    // Preload fonts + init cursor immediately
+    initCursor();
+    initNav();
+
+    initPreloader(() => {
+      initParticles();
+      initSphere();
+      initScrollAnim();
+      heroReveal();
+    });
+  });
+  </script>
+</body>
+</html>
