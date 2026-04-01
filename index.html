@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aksent Consulting — Premium Digital Solutions</title>
+<meta name="description" content="Aksent Consulting — Premium web design, software development, AI automation and digital strategy.">
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   RESET & BASE
+   ═══════════════════════════════════════════════════════════════ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;overflow-x:hidden;font-size:16px}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#08080c;color:#e8e6e3;overflow-x:hidden;cursor:none;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+a{color:inherit;text-decoration:none}
+button{border:none;background:none;cursor:none;font-family:inherit;color:inherit}
+img{max-width:100%;display:block}
+::selection{background:rgba(138,92,246,.4);color:#fff}
+
+/* ═══════════════════════════════════════════════════════════════
+   CUSTOM CURSOR
+   ═══════════════════════════════════════════════════════════════ */
+.cursor-dot{width:8px;height:8px;background:#8a5cf6;border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:99999;mix-blend-mode:difference;transition:transform .1s}
+.cursor-ring{width:40px;height:40px;border:1.5px solid rgba(138,92,246,.5);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:99998;transition:width .3s,height .3s,border-color .3s}
+.cursor-ring.hover{width:64px;height:64px;border-color:rgba(138,92,246,.9)}
+
+/* ═══════════════════════════════════════════════════════════════
+   PRELOADER
+   ═══════════════════════════════════════════════════════════════ */
+.preloader{position:fixed;inset:0;z-index:100000;background:#08080c;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:24px;transition:opacity .8s,visibility .8s}
+.preloader.done{opacity:0;visibility:hidden;pointer-events:none}
+.preloader-ring{width:64px;height:64px;border:2px solid rgba(138,92,246,.15);border-top-color:#8a5cf6;border-radius:50%;animation:spin 1s linear infinite}
+.preloader-text{font-size:13px;letter-spacing:6px;text-transform:uppercase;color:rgba(138,92,246,.7)}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ═══════════════════════════════════════════════════════════════
+   NAVIGATION
+   ═══════════════════════════════════════════════════════════════ */
+.nav{position:fixed;top:0;left:0;right:0;z-index:10000;padding:20px 40px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);background:rgba(8,8,12,.4);border-bottom:1px solid rgba(138,92,246,.08);transition:background .4s}
+.nav-logo{font-size:18px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#fff}
+.nav-logo span{color:#8a5cf6}
+.nav-links{display:flex;align-items:center;gap:32px}
+.nav-links a{font-size:13px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.6);transition:color .3s;position:relative}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:#8a5cf6;transition:width .3s}
+.nav-links a:hover{color:#fff}
+.nav-links a:hover::after{width:100%}
+.lang-toggle{display:flex;gap:4px;margin-left:16px;background:rgba(138,92,246,.1);border-radius:20px;padding:3px}
+.lang-btn{padding:6px 14px;border-radius:16px;font-size:11px;letter-spacing:2px;text-transform:uppercase;transition:background .3s,color .3s;font-weight:600}
+.lang-btn.active{background:#8a5cf6;color:#fff}
+
+/* ═══════════════════════════════════════════════════════════════
+   HERO
+   ═══════════════════════════════════════════════════════════════ */
+.hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+#hero-canvas{position:absolute;inset:0;z-index:1}
+.hero-content{position:relative;z-index:5;text-align:center;max-width:900px;padding:0 24px}
+.hero-badge{display:inline-block;padding:8px 24px;border:1px solid rgba(138,92,246,.3);border-radius:24px;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:rgba(138,92,246,.9);margin-bottom:32px;backdrop-filter:blur(10px);background:rgba(138,92,246,.06)}
+.hero-title{font-size:clamp(36px,6vw,80px);font-weight:800;line-height:1.05;margin-bottom:24px;color:#fff}
+.hero-title .accent{color:#8a5cf6}
+.hero-sub{font-size:clamp(15px,1.8vw,19px);color:rgba(255,255,255,.55);max-width:600px;margin:0 auto 40px;line-height:1.7}
+.hero-cta{display:inline-flex;align-items:center;gap:12px;padding:16px 40px;background:linear-gradient(135deg,#8a5cf6,#6d28d9);border-radius:40px;font-size:14px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#fff;transition:transform .3s,box-shadow .3s}
+.hero-cta:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(138,92,246,.35)}
+.hero-cta svg{width:16px;height:16px;transition:transform .3s}
+.hero-cta:hover svg{transform:translateX(4px)}
+.hero-scroll-hint{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);z-index:5;display:flex;flex-direction:column;align-items:center;gap:8px;color:rgba(255,255,255,.3);font-size:11px;letter-spacing:3px;text-transform:uppercase}
+.hero-scroll-hint .line{width:1px;height:40px;background:linear-gradient(to bottom,rgba(138,92,246,.6),transparent);animation:scrollPulse 2s ease-in-out infinite}
+@keyframes scrollPulse{0%,100%{opacity:.3;transform:scaleY(.6)}50%{opacity:1;transform:scaleY(1)}}
+
+/* ═══════════════════════════════════════════════════════════════
+   MARQUEE
+   ═══════════════════════════════════════════════════════════════ */
+.marquee-wrap{overflow:hidden;padding:28px 0;border-top:1px solid rgba(138,92,246,.08);border-bottom:1px solid rgba(138,92,246,.08);background:rgba(138,92,246,.02)}
+.marquee-track{display:flex;gap:60px;animation:marqueeScroll 30s linear infinite;width:max-content}
+.marquee-item{white-space:nowrap;font-size:14px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.25);display:flex;align-items:center;gap:16px}
+.marquee-item .dot{width:6px;height:6px;background:#8a5cf6;border-radius:50%}
+@keyframes marqueeScroll{to{transform:translateX(-50%)}}
+
+/* ═══════════════════════════════════════════════════════════════
+   SECTIONS COMMON
+   ═══════════════════════════════════════════════════════════════ */
+.section{padding:120px 40px;position:relative}
+.section-label{font-size:11px;letter-spacing:5px;text-transform:uppercase;color:rgba(138,92,246,.7);margin-bottom:16px}
+.section-title{font-size:clamp(28px,4vw,52px);font-weight:700;line-height:1.15;margin-bottom:20px;color:#fff}
+.section-desc{font-size:16px;color:rgba(255,255,255,.5);max-width:560px;line-height:1.75}
+
+/* Reveal animation base */
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:.15s}
+.reveal-delay-2{transition-delay:.3s}
+.reveal-delay-3{transition-delay:.45s}
+.reveal-delay-4{transition-delay:.6s}
+.reveal-delay-5{transition-delay:.75s}
+
+/* ═══════════════════════════════════════════════════════════════
+   SERVICES
+   ═══════════════════════════════════════════════════════════════ */
+.services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:24px;margin-top:56px}
+.service-card{position:relative;padding:40px 32px;border-radius:20px;background:rgba(255,255,255,.03);border:1px solid rgba(138,92,246,.1);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);overflow:hidden;transition:transform .4s cubic-bezier(.16,1,.3,1),border-color .4s,box-shadow .4s;cursor:none}
+.service-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(138,92,246,.08) 0%,transparent 60%);opacity:0;transition:opacity .4s}
+.service-card:hover::before{opacity:1}
+.service-card:hover{transform:translateY(-4px);border-color:rgba(138,92,246,.25);box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.service-num{font-size:48px;font-weight:800;color:rgba(138,92,246,.1);line-height:1;margin-bottom:16px;transition:color .4s}
+.service-card:hover .service-num{color:rgba(138,92,246,.25)}
+.service-name{font-size:20px;font-weight:700;margin-bottom:12px;color:#fff}
+.service-text{font-size:14px;color:rgba(255,255,255,.45);line-height:1.7;margin-bottom:24px}
+.service-link{display:inline-flex;align-items:center;gap:8px;font-size:13px;letter-spacing:1px;text-transform:uppercase;color:#8a5cf6;font-weight:600;transition:gap .3s}
+.service-link:hover{gap:14px}
+.service-link svg{width:14px;height:14px}
+
+/* ═══════════════════════════════════════════════════════════════
+   ORB / SPHERE SECTION
+   ═══════════════════════════════════════════════════════════════ */
+.orb-section{position:relative;min-height:80vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+#orb-canvas{position:absolute;inset:0;z-index:1}
+.orb-content{position:relative;z-index:5;text-align:center;max-width:700px;padding:0 24px}
+.orb-content .section-title{margin-bottom:16px}
+.orb-hint{font-size:12px;letter-spacing:3px;text-transform:uppercase;color:rgba(138,92,246,.5);margin-top:20px}
+
+/* ═══════════════════════════════════════════════════════════════
+   PROCESS
+   ═══════════════════════════════════════════════════════════════ */
+.process-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px;margin-top:56px}
+.process-card{padding:36px 28px;border-radius:20px;background:rgba(255,255,255,.02);border:1px solid rgba(138,92,246,.08);backdrop-filter:blur(12px);transition:transform .4s,border-color .4s}
+.process-card:hover{transform:translateY(-4px);border-color:rgba(138,92,246,.2)}
+.process-step{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#8a5cf6;margin-bottom:16px}
+.process-title{font-size:20px;font-weight:700;margin-bottom:12px;color:#fff}
+.process-desc{font-size:14px;color:rgba(255,255,255,.4);line-height:1.7}
+
+/* ═══════════════════════════════════════════════════════════════
+   PHILOSOPHY / ABOUT
+   ═══════════════════════════════════════════════════════════════ */
+.philosophy{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.philosophy-visual{position:relative;height:400px;border-radius:24px;overflow:hidden;background:linear-gradient(135deg,rgba(138,92,246,.08),rgba(109,40,217,.04));border:1px solid rgba(138,92,246,.1);display:flex;align-items:center;justify-content:center}
+.philosophy-glow{width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(138,92,246,.3),transparent 70%);animation:breathe 4s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(.85);opacity:.6}50%{transform:scale(1.15);opacity:1}}
+.stats-row{display:flex;gap:40px;margin-top:40px}
+.stat-item .stat-num{font-size:36px;font-weight:800;color:#8a5cf6}
+.stat-item .stat-label{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-top:4px}
+
+/* ═══════════════════════════════════════════════════════════════
+   CONTACT
+   ═══════════════════════════════════════════════════════════════ */
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;margin-top:56px;align-items:start}
+.contact-info{display:flex;flex-direction:column;gap:24px}
+.contact-line{font-size:15px;color:rgba(255,255,255,.5);display:flex;align-items:center;gap:12px}
+.contact-line svg{width:18px;height:18px;color:#8a5cf6;flex-shrink:0}
+.contact-line a{transition:color .3s}
+.contact-line a:hover{color:#8a5cf6}
+.contact-form{display:flex;flex-direction:column;gap:16px}
+.form-field{padding:16px 20px;border-radius:12px;border:1px solid rgba(138,92,246,.12);background:rgba(255,255,255,.03);color:#fff;font-size:15px;font-family:inherit;backdrop-filter:blur(8px);transition:border-color .3s;outline:none;resize:none}
+.form-field::placeholder{color:rgba(255,255,255,.25)}
+.form-field:focus{border-color:rgba(138,92,246,.4)}
+.form-submit{padding:16px 40px;background:linear-gradient(135deg,#8a5cf6,#6d28d9);border-radius:12px;font-size:14px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#fff;transition:transform .3s,box-shadow .3s;align-self:flex-start}
+.form-submit:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(138,92,246,.3)}
+
+/* ═══════════════════════════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════════════════════════ */
+.footer{padding:40px;border-top:1px solid rgba(138,92,246,.08);display:flex;align-items:center;justify-content:space-between;font-size:12px;color:rgba(255,255,255,.25);letter-spacing:1px}
+.footer-social{display:flex;gap:20px}
+.footer-social a{transition:color .3s}
+.footer-social a:hover{color:#8a5cf6}
+
+/* ═══════════════════════════════════════════════════════════════
+   SERVICE DETAIL MODAL
+   ═══════════════════════════════════════════════════════════════ */
+.modal-overlay{position:fixed;inset:0;z-index:50000;background:rgba(8,8,12,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:opacity .4s,visibility .4s}
+.modal-overlay.open{opacity:1;visibility:visible}
+.modal-box{max-width:640px;width:90%;max-height:80vh;overflow-y:auto;padding:48px 40px;border-radius:24px;background:rgba(20,20,30,.95);border:1px solid rgba(138,92,246,.15);position:relative}
+.modal-close{position:absolute;top:16px;right:16px;width:40px;height:40px;border-radius:50%;border:1px solid rgba(138,92,246,.2);display:flex;align-items:center;justify-content:center;font-size:18px;color:rgba(255,255,255,.5);transition:border-color .3s,color .3s}
+.modal-close:hover{border-color:#8a5cf6;color:#fff}
+.modal-title{font-size:28px;font-weight:700;color:#fff;margin-bottom:16px}
+.modal-text{font-size:15px;color:rgba(255,255,255,.55);line-height:1.8}
+.modal-text ul{margin:16px 0;padding-left:20px}
+.modal-text li{margin-bottom:8px}
+
+/* ═══════════════════════════════════════════════════════════════
+   AMBIENT GLOW DECORATIONS
+   ═══════════════════════════════════════════════════════════════ */
+.ambient-glow{position:absolute;border-radius:50%;pointer-events:none;filter:blur(80px);opacity:.12}
+.glow-1{width:500px;height:500px;background:#8a5cf6;top:-200px;left:-100px}
+.glow-2{width:400px;height:400px;background:#6d28d9;bottom:-150px;right:-100px}
+.glow-3{width:300px;height:300px;background:#8a5cf6;top:50%;left:50%;transform:translate(-50%,-50%)}
+
+/* ═══════════════════════════════════════════════════════════════
+   LANGUAGE VISIBILITY
+   ═══════════════════════════════════════════════════════════════ */
+[data-lang="en"]{display:none}
+body.lang-en [data-lang="en"]{display:revert}
+body.lang-en [data-lang="sr"]{display:none}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════════════ */
+@media(max-width:900px){
+  .nav{padding:16px 20px}
+  .nav-links a{display:none}
+  .section{padding:80px 20px}
+  .philosophy{grid-template-columns:1fr;gap:32px}
+  .contact-grid{grid-template-columns:1fr;gap:32px}
+  .stats-row{flex-wrap:wrap;gap:24px}
+  .services-grid{grid-template-columns:1fr}
+  .process-grid{grid-template-columns:1fr 1fr}
+  .hero-title{font-size:clamp(28px,8vw,52px)}
+  .footer{flex-direction:column;gap:16px;text-align:center}
+}
+@media(max-width:600px){
+  .process-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ PRELOADER ═══ -->
+<div class="preloader" id="preloader">
+  <div class="preloader-ring"></div>
+  <div class="preloader-text">
+    <span data-lang="sr">Aksent Consulting</span>
+    <span data-lang="en">Aksent Consulting</span>
+  </div>
+</div>
+
+<!-- ═══ CUSTOM CURSOR ═══ -->
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- ═══ NAVIGATION ═══ -->
+<nav class="nav" id="nav">
+  <a href="#" class="nav-logo">Aksent<span>.</span></a>
+  <div class="nav-links">
+    <a href="#services" data-lang="sr">Usluge</a>
+    <a href="#services" data-lang="en">Services</a>
+    <a href="#process" data-lang="sr">Proces</a>
+    <a href="#process" data-lang="en">Process</a>
+    <a href="#about" data-lang="sr">O nama</a>
+    <a href="#about" data-lang="en">About</a>
+    <a href="#contact" data-lang="sr">Kontakt</a>
+    <a href="#contact" data-lang="en">Contact</a>
+    <div class="lang-toggle">
+      <button class="lang-btn active" data-set-lang="sr">SR</button>
+      <button class="lang-btn" data-set-lang="en">EN</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero" id="hero">
+  <canvas id="hero-canvas"></canvas>
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+
+  <div class="hero-content">
+    <div class="hero-badge reveal">
+      <span data-lang="sr">Premium digitalna rešenja</span>
+      <span data-lang="en">Premium digital solutions</span>
+    </div>
+    <h1 class="hero-title reveal reveal-delay-1">
+      <span data-lang="sr">Digitalna rešenja<br>koja donose <span class="accent">rezultate</span></span>
+      <span data-lang="en">Digital solutions<br>that deliver <span class="accent">results</span></span>
+    </h1>
+    <p class="hero-sub reveal reveal-delay-2">
+      <span data-lang="sr">Projektujemo i razvijamo veb sajtove, softverska rešenja i digitalne strategije koje transformišu vaše poslovanje i privlače klijente.</span>
+      <span data-lang="en">We design and develop websites, software solutions and digital strategies that transform your business and attract clients.</span>
+    </p>
+    <a href="#contact" class="hero-cta reveal reveal-delay-3">
+      <span data-lang="sr">Započnite projekat</span>
+      <span data-lang="en">Start your project</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+
+  <div class="hero-scroll-hint">
+    <div class="line"></div>
+    <span data-lang="sr">Skrolujte</span>
+    <span data-lang="en">Scroll</span>
+  </div>
+</section>
+
+<!-- ═══ MARQUEE ═══ -->
+<div class="marquee-wrap">
+  <div class="marquee-track" id="marqueeTrack">
+    <!-- Filled by JS based on language -->
+  </div>
+</div>
+
+<!-- ═══ SERVICES ═══ -->
+<section class="section" id="services">
+  <div class="ambient-glow glow-3"></div>
+  <div class="section-label reveal">
+    <span data-lang="sr">Šta radimo</span>
+    <span data-lang="en">What we do</span>
+  </div>
+  <div class="section-title reveal reveal-delay-1">
+    <span data-lang="sr">Usluge koje pokreću<br>vaš digitalni rast</span>
+    <span data-lang="en">Services that power<br>your digital growth</span>
+  </div>
+
+  <div class="services-grid" id="servicesGrid">
+    <!-- Cards injected by JS -->
+  </div>
+</section>
+
+<!-- ═══ ORB / SPHERE ═══ -->
+<section class="orb-section" id="orbSection">
+  <canvas id="orb-canvas"></canvas>
+  <div class="orb-content">
+    <div class="section-label reveal">
+      <span data-lang="sr">Naš pristup</span>
+      <span data-lang="en">Our approach</span>
+    </div>
+    <div class="section-title reveal reveal-delay-1">
+      <span data-lang="sr">Svaki piksel ima<br>svoju <span class="accent">svrhu</span></span>
+      <span data-lang="en">Every pixel has<br>its <span class="accent">purpose</span></span>
+    </div>
+    <p class="section-desc reveal reveal-delay-2" style="margin:0 auto">
+      <span data-lang="sr">Kombinujemo strategiju, dizajn i tehnologiju da kreiramo digitalna iskustva koja ostavljaju trajan utisak na vaše klijente.</span>
+      <span data-lang="en">We combine strategy, design and technology to create digital experiences that leave a lasting impression on your clients.</span>
+    </p>
+    <div class="orb-hint reveal reveal-delay-3">
+      <span data-lang="sr">Kliknite na sferu</span>
+      <span data-lang="en">Click the sphere</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PROCESS ═══ -->
+<section class="section" id="process">
+  <div class="section-label reveal">
+    <span data-lang="sr">Kako radimo</span>
+    <span data-lang="en">How we work</span>
+  </div>
+  <div class="section-title reveal reveal-delay-1">
+    <span data-lang="sr">Od ideje do rezultata<br>u četiri koraka</span>
+    <span data-lang="en">From idea to results<br>in four steps</span>
+  </div>
+
+  <div class="process-grid" id="processGrid">
+    <!-- Cards injected by JS -->
+  </div>
+</section>
+
+<!-- ═══ PHILOSOPHY / ABOUT ═══ -->
+<section class="section" id="about">
+  <div class="philosophy">
+    <div>
+      <div class="section-label reveal">
+        <span data-lang="sr">O nama</span>
+        <span data-lang="en">About us</span>
+      </div>
+      <div class="section-title reveal reveal-delay-1">
+        <span data-lang="sr">Više od agencije.<br><span class="accent">Digitalni partner.</span></span>
+        <span data-lang="en">More than an agency.<br><span class="accent">Digital partner.</span></span>
+      </div>
+      <div class="section-desc reveal reveal-delay-2">
+        <span data-lang="sr">Sa preko 10 godina iskustva u regionu, gradimo digitalna rešenja za kompanije u Srbiji, Hrvatskoj, Bosni i Hercegovini, Crnoj Gori i Makedoniji. Naš tim spaja kreativnost sa tehničkom preciznošću i poslovnom strategijom.</span>
+        <span data-lang="en">With over 10 years of experience in the region, we build digital solutions for companies in Serbia, Croatia, Bosnia and Herzegovina, Montenegro and North Macedonia. Our team merges creativity with technical precision and business strategy.</span>
+      </div>
+      <div class="stats-row reveal reveal-delay-3">
+        <div class="stat-item">
+          <div class="stat-num">200+</div>
+          <div class="stat-label" data-lang="sr">Projekata</div>
+          <div class="stat-label" data-lang="en">Projects</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">10+</div>
+          <div class="stat-label" data-lang="sr">Godina iskustva</div>
+          <div class="stat-label" data-lang="en">Years of experience</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">5</div>
+          <div class="stat-label" data-lang="sr">Tržišta</div>
+          <div class="stat-label" data-lang="en">Markets</div>
+        </div>
+      </div>
+    </div>
+    <div class="philosophy-visual reveal">
+      <div class="philosophy-glow"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ MARQUEE 2 ═══ -->
+<div class="marquee-wrap">
+  <div class="marquee-track" id="marqueeTrack2">
+  </div>
+</div>
+
+<!-- ═══ CONTACT ═══ -->
+<section class="section" id="contact">
+  <div class="section-label reveal">
+    <span data-lang="sr">Kontakt</span>
+    <span data-lang="en">Contact</span>
+  </div>
+  <div class="section-title reveal reveal-delay-1">
+    <span data-lang="sr">Spremni da izgradimo<br>nešto <span class="accent">zajedno?</span></span>
+    <span data-lang="en">Ready to build<br>something <span class="accent">together?</span></span>
+  </div>
+
+  <div class="contact-grid">
+    <div class="contact-info reveal reveal-delay-2">
+      <div class="contact-line">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        <a href="mailto:info.aksentconsulting@gmail.com">info.aksentconsulting@gmail.com</a>
+      </div>
+      <div class="contact-line">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.86 19.86 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.86 19.86 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        <a href="tel:+381638347718">+381 63 834 77 18</a>
+      </div>
+      <div class="contact-line">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10A15.3 15.3 0 0112 2z"/></svg>
+        <span data-lang="sr">Srbija, Hrvatska, BiH, Crna Gora, Makedonija</span>
+        <span data-lang="en">Serbia, Croatia, BiH, Montenegro, North Macedonia</span>
+      </div>
+      <div class="contact-line">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37zM17.5 6.5h.01"/></svg>
+        <a href="https://instagram.com/peccatoredesign" target="_blank" rel="noopener">@peccatoredesign</a>
+      </div>
+    </div>
+
+    <form class="contact-form reveal reveal-delay-3" id="contactForm" onsubmit="return false;">
+      <input class="form-field" type="text" required>
+      <input class="form-field" type="email" required>
+      <textarea class="form-field" rows="5"></textarea>
+      <button class="form-submit" type="submit">
+        <span data-lang="sr">Pošaljite poruku</span>
+        <span data-lang="en">Send message</span>
+      </button>
+    </form>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="footer">
+  <span>
+    <span data-lang="sr">&copy; 2026 Aksent Consulting. Sva prava zadržana.</span>
+    <span data-lang="en">&copy; 2026 Aksent Consulting. All rights reserved.</span>
+  </span>
+  <div class="footer-social">
+    <a href="https://instagram.com/peccatoredesign" target="_blank" rel="noopener">Instagram</a>
+    <a href="mailto:info.aksentconsulting@gmail.com">Email</a>
+  </div>
+</footer>
+
+<!-- ═══ SERVICE DETAIL MODAL ═══ -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box">
+    <button class="modal-close" id="modalClose">&times;</button>
+    <div class="modal-title" id="modalTitle"></div>
+    <div class="modal-text" id="modalText"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     JAVASCRIPT
+     ═══════════════════════════════════════════════════════════════ -->
+<script>
+(function(){
+"use strict";
+
+/* ───── DATA ───── */
+var LANG = "sr";
+
+var SERVICES = [
+  {
+    num:"01",
+    sr:{name:"Veb dizajn i razvoj",text:"Sajtovi i digitalni proizvodi koji privlače pažnju, grade poverenje i pretvaraju posetioce u klijente.",link:"Saznajte više",
+      detail:"Kreiramo vizuelno upečatljive i tehnički besprekorne veb sajtove prilagođene vašem poslovanju. Od landing stranica i korporativnih prezentacija do složenih platformi, svaki projekat prolazi kroz istraživanje, strategiju, dizajn i razvoj sa fokusom na korisničko iskustvo i konverziju.<ul><li>Responzivan dizajn za sve uređaje</li><li>SEO optimizacija od prvog dana</li><li>Brzo učitavanje i visoke performanse</li><li>CMS integracija po meri</li></ul>"},
+    en:{name:"Web Design & Development",text:"Websites and digital products that attract attention, build trust and turn visitors into clients.",link:"Learn more",
+      detail:"We create visually striking and technically flawless websites tailored to your business. From landing pages and corporate presentations to complex platforms, every project goes through research, strategy, design and development with a focus on user experience and conversion.<ul><li>Responsive design for all devices</li><li>SEO optimization from day one</li><li>Fast loading and high performance</li><li>Custom CMS integration</li></ul>"}
+  },
+  {
+    num:"02",
+    sr:{name:"Aplikacije i softver",text:"Prototipovi, integracije i skalabilna rešenja koja digitalizuju vaše poslovanje i ubrzavaju rast.",link:"Saznajte više",
+      detail:"Razvijamo veb i mobilne aplikacije, interne alate i softverske sisteme koji automatizuju procese i podižu efikasnost vašeg tima. Radimo sa modernim tehnologijama i pratimo najbolje prakse industrije.<ul><li>Veb i mobilne aplikacije</li><li>API integracije sa postojećim sistemima</li><li>Dashboard-ovi i interni alati</li><li>Skalabilna cloud arhitektura</li></ul>"},
+    en:{name:"Applications & Software",text:"Prototypes, integrations and scalable solutions that digitize your business and accelerate growth.",link:"Learn more",
+      detail:"We develop web and mobile applications, internal tools and software systems that automate processes and boost your team's efficiency. We work with modern technologies and follow industry best practices.<ul><li>Web and mobile applications</li><li>API integrations with existing systems</li><li>Dashboards and internal tools</li><li>Scalable cloud architecture</li></ul>"}
+  },
+  {
+    num:"03",
+    sr:{name:"AI automatizacija",text:"Pametni tokovi i alati koji štede vreme vašem timu i donose merljive rezultate.",link:"Saznajte više",
+      detail:"Implementiramo rešenja zasnovana na veštačkoj inteligenciji koja automatizuju repetitivne zadatke, poboljšavaju korisničku podršku i optimizuju poslovne procese. Od chatbot-ova do napredne analitike.<ul><li>Chatbot-ovi i virtuelni asistenti</li><li>Automatizacija radnih tokova</li><li>Prediktivna analitika</li><li>Integracija AI modela u postojeće sisteme</li></ul>"},
+    en:{name:"AI Automation",text:"Smart workflows and tools that save your team time and deliver measurable results.",link:"Learn more",
+      detail:"We implement AI-powered solutions that automate repetitive tasks, improve customer support and optimize business processes. From chatbots to advanced analytics.<ul><li>Chatbots and virtual assistants</li><li>Workflow automation</li><li>Predictive analytics</li><li>AI model integration into existing systems</li></ul>"}
+  },
+  {
+    num:"04",
+    sr:{name:"Brand identitet",text:"Vizuelni jezik i strateški smer koji se pamte i izdvajaju vas od konkurencije.",link:"Saznajte više",
+      detail:"Gradimo brendove koji komuniciraju jasno, izgledaju profesionalno i ostavljaju utisak. Od logotipa i vizuelnog identiteta do kompletnih brand strategija.<ul><li>Logotip i vizuelni identitet</li><li>Brand knjiga i smernice</li><li>Ton komunikacije i messaging</li><li>Materijali za digitalni i štampani marketing</li></ul>"},
+    en:{name:"Brand Identity",text:"Visual language and strategic direction that are remembered and set you apart from competitors.",link:"Learn more",
+      detail:"We build brands that communicate clearly, look professional and leave a lasting impression. From logos and visual identity to complete brand strategies.<ul><li>Logo and visual identity</li><li>Brand book and guidelines</li><li>Tone of voice and messaging</li><li>Materials for digital and print marketing</li></ul>"}
+  },
+  {
+    num:"05",
+    sr:{name:"E-commerce i prodaja",text:"Prodajni sistemi i iskustvo kupca na svim kanalima koji maksimizuju vaš prihod.",link:"Saznajte više",
+      detail:"Kreiramo online prodavnice i e-commerce platforme koje pružaju izuzetno korisničko iskustvo i maksimizuju konverziju. Od dizajna do integracije plaćanja i logistike.<ul><li>Shopify, WooCommerce, custom rešenja</li><li>Optimizacija konverzije</li><li>Integracija plaćanja i isporuke</li><li>Višekanalna prodajna strategija</li></ul>"},
+    en:{name:"E-commerce & Sales",text:"Sales systems and customer experience across all channels that maximize your revenue.",link:"Learn more",
+      detail:"We create online stores and e-commerce platforms that provide exceptional user experience and maximize conversion. From design to payment and logistics integration.<ul><li>Shopify, WooCommerce, custom solutions</li><li>Conversion optimization</li><li>Payment and shipping integration</li><li>Multi-channel sales strategy</li></ul>"}
+  },
+  {
+    num:"06",
+    sr:{name:"Konsultacije",text:"Strategija, analiza i digitalno planiranje za vaš sledeći veliki korak.",link:"Saznajte više",
+      detail:"Pružamo stručne konsultacije koje vam pomažu da donesete informisane odluke o digitalnoj transformaciji vašeg poslovanja. Analiza tržišta, konkurencije i prilika.<ul><li>Digitalna strategija i planiranje</li><li>Analiza konkurencije i tržišta</li><li>UX audit postojećih proizvoda</li><li>Tehnička procena i preporuke</li></ul>"},
+    en:{name:"Consulting",text:"Strategy, analysis and digital planning for your next big step.",link:"Learn more",
+      detail:"We provide expert consulting that helps you make informed decisions about the digital transformation of your business. Market analysis, competition and opportunities.<ul><li>Digital strategy and planning</li><li>Competition and market analysis</li><li>UX audit of existing products</li><li>Technical assessment and recommendations</li></ul>"}
+  }
+];
+
+var PROCESS = [
+  {step:"01",sr:{title:"Analiza",desc:"Duboko razumevanje vašeg biznisa, ciljne grupe, tržišta i konkurencije."},en:{title:"Analysis",desc:"Deep understanding of your business, target audience, market and competition."}},
+  {step:"02",sr:{title:"Strategija",desc:"Arhitektura digitalnog sistema koji prodaje i gradi poverenje kod vaših klijenata."},en:{title:"Strategy",desc:"Architecture of a digital system that sells and builds trust with your clients."}},
+  {step:"03",sr:{title:"Kreacija",desc:"Premium dizajn i razvoj bez kompromisa na svakom pikselu vašeg projekta."},en:{title:"Creation",desc:"Premium design and development without compromise on every pixel of your project."}},
+  {step:"04",sr:{title:"Lansiranje",desc:"Optimizacija, testiranje i izlazak na tržište sa punom snagom i podrškom."},en:{title:"Launch",desc:"Optimization, testing and market launch with full power and support."}}
+];
+
+var MARQUEE_SR = ["Veb dizajn","Softverska rešenja","AI automatizacija","Brand identitet","E-commerce","Digitalne strategije","Mobilne aplikacije","SEO optimizacija","UX/UI dizajn","Konsultacije"];
+var MARQUEE_EN = ["Web Design","Software Solutions","AI Automation","Brand Identity","E-commerce","Digital Strategies","Mobile Apps","SEO Optimization","UX/UI Design","Consulting"];
+
+var FORM_PH_SR = ["Vaše ime","Vaš email","Vaša poruka..."];
+var FORM_PH_EN = ["Your name","Your email","Your message..."];
+
+/* ───── LANGUAGE SWITCH ───── */
+function setLang(lang){
+  LANG = lang;
+  if(lang === "en") document.body.classList.add("lang-en");
+  else document.body.classList.remove("lang-en");
+  document.querySelectorAll(".lang-btn").forEach(function(b){
+    b.classList.toggle("active", b.getAttribute("data-set-lang") === lang);
+  });
+  buildMarquee();
+  buildServices();
+  buildProcess();
+  updateFormPlaceholders();
+}
+
+document.querySelectorAll("[data-set-lang]").forEach(function(btn){
+  btn.addEventListener("click", function(){
+    setLang(btn.getAttribute("data-set-lang"));
+  });
+});
+
+/* ───── BUILD MARQUEE ───── */
+function buildMarquee(){
+  var items = LANG === "en" ? MARQUEE_EN : MARQUEE_SR;
+  var html = "";
+  for(var r = 0; r < 4; r++){
+    for(var i = 0; i < items.length; i++){
+      html += '<span class="marquee-item"><span class="dot"></span>' + items[i] + '</span>';
+    }
+  }
+  var t1 = document.getElementById("marqueeTrack");
+  var t2 = document.getElementById("marqueeTrack2");
+  if(t1) t1.innerHTML = html;
+  if(t2) t2.innerHTML = html;
+}
+
+/* ───── BUILD SERVICES ───── */
+function buildServices(){
+  var grid = document.getElementById("servicesGrid");
+  if(!grid) return;
+  var html = "";
+  for(var i = 0; i < SERVICES.length; i++){
+    var s = SERVICES[i];
+    var d = s[LANG];
+    html += '<div class="service-card reveal reveal-delay-' + ((i % 3) + 1) + '" data-service="' + i + '">' +
+      '<div class="service-num">' + s.num + '</div>' +
+      '<div class="service-name">' + d.name + '</div>' +
+      '<div class="service-text">' + d.text + '</div>' +
+      '<span class="service-link">' + d.link + ' <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M7 7h10v10"/></svg></span>' +
+      '</div>';
+  }
+  grid.innerHTML = html;
+  /* Re-observe for scroll reveal */
+  grid.querySelectorAll(".reveal").forEach(function(el){
+    revealObserver.observe(el);
+  });
+  /* Card mouse glow */
+  grid.querySelectorAll(".service-card").forEach(function(card){
+    card.addEventListener("mousemove", function(e){
+      var r = card.getBoundingClientRect();
+      card.style.setProperty("--mx", ((e.clientX - r.left) / r.width * 100) + "%");
+      card.style.setProperty("--my", ((e.clientY - r.top) / r.height * 100) + "%");
+    });
+    card.addEventListener("click", function(){
+      openModal(parseInt(card.getAttribute("data-service")));
+    });
+  });
+}
+
+/* ───── BUILD PROCESS ───── */
+function buildProcess(){
+  var grid = document.getElementById("processGrid");
+  if(!grid) return;
+  var html = "";
+  for(var i = 0; i < PROCESS.length; i++){
+    var p = PROCESS[i];
+    var d = p[LANG];
+    html += '<div class="process-card reveal reveal-delay-' + (i + 1) + '">' +
+      '<div class="process-step">' + (LANG === "sr" ? "Korak " : "Step ") + p.step + '</div>' +
+      '<div class="process-title">' + d.title + '</div>' +
+      '<div class="process-desc">' + d.desc + '</div>' +
+      '</div>';
+  }
+  grid.innerHTML = html;
+  grid.querySelectorAll(".reveal").forEach(function(el){
+    revealObserver.observe(el);
+  });
+}
+
+/* ───── FORM PLACEHOLDERS ───── */
+function updateFormPlaceholders(){
+  var form = document.getElementById("contactForm");
+  if(!form) return;
+  var fields = form.querySelectorAll(".form-field");
+  var ph = LANG === "en" ? FORM_PH_EN : FORM_PH_SR;
+  for(var i = 0; i < fields.length && i < ph.length; i++){
+    fields[i].placeholder = ph[i];
+  }
+}
+
+/* ───── MODAL ───── */
+function openModal(idx){
+  var s = SERVICES[idx];
+  if(!s) return;
+  var d = s[LANG];
+  document.getElementById("modalTitle").innerHTML = s.num + " — " + d.name;
+  document.getElementById("modalText").innerHTML = d.detail;
+  document.getElementById("modalOverlay").classList.add("open");
+}
+document.getElementById("modalClose").addEventListener("click", function(){
+  document.getElementById("modalOverlay").classList.remove("open");
+});
+document.getElementById("modalOverlay").addEventListener("click", function(e){
+  if(e.target === this) this.classList.remove("open");
+});
+
+/* ───── SCROLL REVEAL (Intersection Observer) ───── */
+var revealObserver = new IntersectionObserver(function(entries){
+  entries.forEach(function(entry){
+    if(entry.isIntersecting){
+      entry.target.classList.add("visible");
+    }
+  });
+}, {threshold:0.12, rootMargin:"0px 0px -40px 0px"});
+
+document.querySelectorAll(".reveal").forEach(function(el){
+  revealObserver.observe(el);
+});
+
+/* ───── CUSTOM CURSOR ───── */
+var dot = document.getElementById("cursorDot");
+var ring = document.getElementById("cursorRing");
+var mx = 0, my = 0, rx = 0, ry = 0;
+
+document.addEventListener("mousemove", function(e){
+  mx = e.clientX; my = e.clientY;
+  dot.style.left = mx - 4 + "px";
+  dot.style.top = my - 4 + "px";
+});
+
+(function cursorLoop(){
+  rx += (mx - rx) * 0.15;
+  ry += (my - ry) * 0.15;
+  ring.style.left = rx - 20 + "px";
+  ring.style.top = ry - 20 + "px";
+  requestAnimationFrame(cursorLoop);
+})();
+
+document.querySelectorAll("a, button, .service-card, .form-submit, .hero-cta, .modal-close").forEach(function(el){
+  el.addEventListener("mouseenter", function(){ ring.classList.add("hover"); });
+  el.addEventListener("mouseleave", function(){ ring.classList.remove("hover"); });
+});
+
+/* ───── NAV BACKGROUND ON SCROLL ───── */
+window.addEventListener("scroll", function(){
+  var nav = document.getElementById("nav");
+  if(window.scrollY > 80) nav.style.background = "rgba(8,8,12,.85)";
+  else nav.style.background = "rgba(8,8,12,.4)";
+}, {passive:true});
+
+/* ═══════════════════════════════════════════════════════════════
+   HERO CANVAS — PARTICLE GALAXY
+   ═══════════════════════════════════════════════════════════════ */
+(function(){
+  var canvas = document.getElementById("hero-canvas");
+  if(!canvas) return;
+  var ctx = canvas.getContext("2d");
+  var W, H, particles = [], TOTAL = 2000;
+  var mouseCanvas = {x: -9999, y: -9999};
+
+  function resize(){
+    W = canvas.width = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+  }
+  resize();
+  window.addEventListener("resize", resize);
+
+  canvas.addEventListener("mousemove", function(e){
+    var r = canvas.getBoundingClientRect();
+    mouseCanvas.x = e.clientX - r.left;
+    mouseCanvas.y = e.clientY - r.top;
+  });
+
+  for(var i = 0; i < TOTAL; i++){
+    var layer = Math.random();
+    var speed = 0.1 + layer * 0.4;
+    var size = 0.5 + layer * 1.8;
+    var alpha = 0.15 + layer * 0.5;
+    particles.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      vx: (Math.random() - 0.5) * speed,
+      vy: (Math.random() - 0.5) * speed,
+      size: size,
+      alpha: alpha,
+      hue: 258 + Math.random() * 30
+    });
+  }
+
+  function drawParticles(){
+    ctx.clearRect(0, 0, W, H);
+
+    /* Ambient center glow */
+    var grd = ctx.createRadialGradient(W * 0.5, H * 0.5, 0, W * 0.5, H * 0.5, Math.max(W, H) * 0.5);
+    grd.addColorStop(0, "rgba(138,92,246,.06)");
+    grd.addColorStop(1, "transparent");
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, W, H);
+
+    for(var i = 0; i < particles.length; i++){
+      var p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+
+      /* Wrap around */
+      if(p.x < -10) p.x = W + 10;
+      if(p.x > W + 10) p.x = -10;
+      if(p.y < -10) p.y = H + 10;
+      if(p.y > H + 10) p.y = -10;
+
+      /* Mouse repulsion */
+      var dx = p.x - mouseCanvas.x;
+      var dy = p.y - mouseCanvas.y;
+      var dist = Math.sqrt(dx * dx + dy * dy);
+      if(dist < 120 && dist > 0){
+        var force = (120 - dist) / 120 * 0.8;
+        p.x += (dx / dist) * force;
+        p.y += (dy / dist) * force;
+      }
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fillStyle = "hsla(" + p.hue + ",70%,70%," + p.alpha + ")";
+      ctx.fill();
+    }
+    requestAnimationFrame(drawParticles);
+  }
+  drawParticles();
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   ORB CANVAS — 3D SPHERE + CONSTELLATION BURST
+   ═══════════════════════════════════════════════════════════════ */
+(function(){
+  var canvas = document.getElementById("orb-canvas");
+  if(!canvas) return;
+  var ctx = canvas.getContext("2d");
+  var W, H;
+  var orbPoints = [];
+  var POINT_COUNT = 500;
+  var rotationX = 0, rotationY = 0;
+  var burst = false, burstTime = 0, burstDuration = 2500;
+  var burstVelocities = [];
+
+  function resize(){
+    W = canvas.width = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+  }
+  resize();
+  window.addEventListener("resize", resize);
+
+  /* Generate sphere points using fibonacci distribution */
+  var goldenAngle = Math.PI * (3 - Math.sqrt(5));
+  for(var i = 0; i < POINT_COUNT; i++){
+    var t = i / POINT_COUNT;
+    var inclination = Math.acos(1 - 2 * t);
+    var azimuth = goldenAngle * i;
+    var radius = 140;
+    orbPoints.push({
+      ox: radius * Math.sin(inclination) * Math.cos(azimuth),
+      oy: radius * Math.sin(inclination) * Math.sin(azimuth),
+      oz: radius * Math.cos(inclination),
+      x: 0, y: 0, z: 0,
+      bx: 0, by: 0, bz: 0, /* burst position */
+      size: 1.2 + Math.random() * 1,
+      alpha: 0.4 + Math.random() * 0.5
+    });
+  }
+
+  canvas.addEventListener("click", function(){
+    if(burst) return;
+    burst = true;
+    burstTime = performance.now();
+    burstVelocities = [];
+    for(var i = 0; i < orbPoints.length; i++){
+      var p = orbPoints[i];
+      var len = Math.sqrt(p.x * p.x + p.y * p.y + p.z * p.z) || 1;
+      var speed = 2 + Math.random() * 4;
+      burstVelocities.push({
+        vx: (p.x / len) * speed + (Math.random() - 0.5) * 2,
+        vy: (p.y / len) * speed + (Math.random() - 0.5) * 2,
+        vz: (p.z / len) * speed + (Math.random() - 0.5) * 2
+      });
+      p.bx = p.x;
+      p.by = p.y;
+      p.bz = p.z;
+    }
+  });
+
+  function drawOrb(now){
+    ctx.clearRect(0, 0, W, H);
+    var cx = W / 2, cy = H / 2;
+
+    rotationY += 0.003;
+    rotationX += 0.001;
+
+    var cosY = Math.cos(rotationY), sinY = Math.sin(rotationY);
+    var cosX = Math.cos(rotationX), sinX = Math.sin(rotationX);
+
+    /* Center glow */
+    var grd = ctx.createRadialGradient(cx, cy, 0, cx, cy, 200);
+    grd.addColorStop(0, "rgba(138,92,246,.12)");
+    grd.addColorStop(1, "transparent");
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, W, H);
+
+    var burstProgress = 0;
+    if(burst){
+      var elapsed = now - burstTime;
+      if(elapsed > burstDuration){
+        burst = false;
+        burstProgress = 0;
+      } else {
+        burstProgress = elapsed / burstDuration;
+      }
+    }
+
+    /* Sort by z for depth */
+    var projected = [];
+    for(var i = 0; i < orbPoints.length; i++){
+      var p = orbPoints[i];
+      var px, py, pz;
+
+      if(burst && burstProgress > 0){
+        var bv = burstVelocities[i];
+        /* Ease out and come back */
+        var t;
+        if(burstProgress < 0.5){
+          t = burstProgress * 2; /* expand */
+          t = 1 - (1 - t) * (1 - t); /* ease out */
+        } else {
+          t = (1 - burstProgress) * 2; /* contract */
+          t = 1 - (1 - t) * (1 - t);
+        }
+        var spread = t * 180;
+        px = p.ox + bv.vx * spread;
+        py = p.oy + bv.vy * spread;
+        pz = p.oz + bv.vz * spread;
+      } else {
+        px = p.ox;
+        py = p.oy;
+        pz = p.oz;
+      }
+
+      /* Rotate Y */
+      var x1 = px * cosY - pz * sinY;
+      var z1 = px * sinY + pz * cosY;
+      /* Rotate X */
+      var y1 = py * cosX - z1 * sinX;
+      var z2 = py * sinX + z1 * cosX;
+
+      p.x = x1; p.y = y1; p.z = z2;
+
+      var scale = 400 / (400 + z2);
+      projected.push({
+        sx: cx + x1 * scale,
+        sy: cy + y1 * scale,
+        z: z2,
+        size: p.size * scale,
+        alpha: p.alpha * scale
+      });
+    }
+
+    projected.sort(function(a, b){ return a.z - b.z; });
+
+    /* Draw connection lines for near points (constellation effect) */
+    ctx.strokeStyle = "rgba(138,92,246,.04)";
+    ctx.lineWidth = 0.5;
+    for(var i = 0; i < projected.length; i++){
+      for(var j = i + 1; j < projected.length; j++){
+        var dx = projected[i].sx - projected[j].sx;
+        var dy = projected[i].sy - projected[j].sy;
+        var d = dx * dx + dy * dy;
+        var threshold = burst ? 8000 : 3000;
+        if(d < threshold){
+          ctx.beginPath();
+          ctx.moveTo(projected[i].sx, projected[i].sy);
+          ctx.lineTo(projected[j].sx, projected[j].sy);
+          ctx.stroke();
+        }
+        if(j > i + 8) break; /* Performance limit */
+      }
+    }
+
+    /* Draw points */
+    for(var i = 0; i < projected.length; i++){
+      var pp = projected[i];
+      ctx.beginPath();
+      ctx.arc(pp.sx, pp.sy, pp.size, 0, Math.PI * 2);
+      ctx.fillStyle = "hsla(263,70%,72%," + Math.min(pp.alpha, 0.9) + ")";
+      ctx.fill();
+    }
+
+    requestAnimationFrame(drawOrb);
+  }
+  requestAnimationFrame(drawOrb);
+})();
+
+/* ───── PRELOADER ───── */
+window.addEventListener("load", function(){
+  setTimeout(function(){
+    document.getElementById("preloader").classList.add("done");
+  }, 800);
+});
+
+/* ───── INIT ───── */
+buildMarquee();
+buildServices();
+buildProcess();
+updateFormPlaceholders();
+
+/* Smooth scroll for nav links */
+document.querySelectorAll('a[href^="#"]').forEach(function(a){
+  a.addEventListener("click", function(e){
+    var target = document.querySelector(this.getAttribute("href"));
+    if(target){
+      e.preventDefault();
+      target.scrollIntoView({behavior:"smooth"});
+    }
+  });
+});
+
+})();
+</script>
+</body>
+</html>
